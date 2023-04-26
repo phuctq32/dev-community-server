@@ -1,9 +1,11 @@
 package main
 
 import (
+	"dev_community_server/components/appctx"
 	"dev_community_server/configs"
 )
 
 func main() {
-	configs.InitEnvConfigs()
+	appConfigs := configs.NewAppConfigs()
+	appctx.NewAppContext(appConfigs.GetMongoDbConnection())
 }
