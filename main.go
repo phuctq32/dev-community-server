@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"dev_community_server/configs"
+)
 
 func main() {
-	fmt.Print("Hello world")
+	configs.InitEnvConfigs()
 }
