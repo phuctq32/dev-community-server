@@ -12,6 +12,7 @@ type AppConfig interface {
 
 type appConfigs struct {
 	DbConfigs `mapstructure:",squash"`
+	Port      string `mapstructure:"PORT"`
 }
 
 func NewAppConfigs() (configs *appConfigs) {
