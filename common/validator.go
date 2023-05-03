@@ -8,10 +8,42 @@ import (
 	"strings"
 )
 
+type Validator interface {
+	Validate(obj interface{}) []*ValidationError
+}
+
 type ValidationError struct {
 	Field   string      `json:"field"`
 	Message string      `json:"message"`
 	Value   interface{} `json:"value"`
+}
+
+type myValidator struct {
+	validator *validator.Validate
+}
+
+func NewValidator() *myValidator {
+	var v myValidator
+	v.validator = validator.New()
+	v.validator.RegisterTagNameFunc(func(fld reflect.StructField) string {
+		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
+
+		if name == "-" {
+			return ""
+		}
+
+		return name
+	})
+
+	return &v
+}
+
+func (v *myValidator) Validate(obj interface{}) []*ValidationError {
+	if err := v.validator.Struct(obj); err != nil {
+		return validationErrorsConverter(err)
+	}
+
+	return nil
 }
 
 func formatValidationError(err validator.FieldError) *ValidationError {
@@ -41,27 +73,12 @@ func formatValidationError(err validator.FieldError) *ValidationError {
 	return res
 }
 
-func ValidationErrorsConverter(errs error) []*ValidationError {
-	log.Println("do validate")
+func validationErrorsConverter(errs error) []*ValidationError {
+	log.Println(errs.(validator.ValidationErrors))
 	var res []*ValidationError
 	for _, err := range errs.(validator.ValidationErrors) {
 		res = append(res, formatValidationError(err))
 	}
 
 	return res
-}
-
-func NewValidator() *validator.Validate {
-	validate := validator.New()
-	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-
-		if name == "-" {
-			return ""
-		}
-
-		return name
-	})
-
-	return validate
 }
