@@ -1,6 +1,7 @@
 package main
 
 import (
+	"dev_community_server/common"
 	"dev_community_server/components/appctx"
 	"dev_community_server/configs"
 	"dev_community_server/middlewares"
@@ -12,7 +13,7 @@ import (
 func Bootstrap() {
 	// Load Configs
 	appConfigs := configs.NewAppConfigs()
-	appCtx := appctx.NewAppContext(appConfigs.GetMongoDbConnection())
+	appCtx := appctx.NewAppContext(appConfigs.GetMongoDbConnection(), common.NewValidator())
 
 	// Gin setup
 	router := gin.Default()
