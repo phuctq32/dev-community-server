@@ -12,14 +12,12 @@ func Recover(ctx appctx.AppContext) gin.HandlerFunc {
 			if err := recover(); err != nil {
 				c.Header("Content-Type", "application/json")
 
-				if appErr, ok := err.(*common.AppError); ok {
-					c.AbortWithStatusJSON(appErr.StatusCode, appErr)
-
-					panic(appErr)
-					return
+				appErr, ok := err.(*common.AppError)
+				if !ok {
+					appErr = common.NewServerError(err.(error))
 				}
 
-				appErr := common.NewServerError(err.(error))
+				appErr.Logging()
 				c.AbortWithStatusJSON(appErr.StatusCode, appErr)
 				panic(appErr)
 				return

@@ -8,19 +8,21 @@ import (
 )
 
 type AppError struct {
-	StatusCode int    `json:"status_code"`
-	Key        string `json:"error_key"`
-	Message    string `json:"message"`
-	RootErr    error  `json:"-"`
-	Log        string `json:"-"`
+	StatusCode      int                `json:"status_code"`
+	Key             string             `json:"error_key"`
+	Message         string             `json:"message"`
+	RootErr         error              `json:"-"`
+	Log             string             `json:"-"`
+	ValidationError []*ValidationError `json:"validation_error,omitempty"`
 }
 
 type AppErrorLog struct {
-	StatusCode int    `json:"-"`
-	Key        string `json:"error_key"`
-	Message    string `json:"-"`
-	RootErr    error  `json:"root_error"`
-	Log        string `json:"log"`
+	//StatusCode int    `json:"-"`
+	Key string `json:"error_key"`
+	//Message    string `json:"-"`
+	RootErr         error              `json:"root_error"`
+	Log             string             `json:"log"`
+	ValidationError []*ValidationError `json:"validation_error,omitempty"`
 }
 
 func (err *AppError) Error() string {
@@ -36,14 +38,15 @@ func (err *AppError) RootError() error {
 }
 
 func (e AppError) Logging() {
-	e.RootErr = e.RootError()
-	errLog := AppErrorLog(e)
-	jsonAppErr, err := json.MarshalIndent(errLog, "", "  ")
-	if err != nil {
-		log.Println("fda")
+	errLog := AppErrorLog{
+		Key:     e.Key,
+		Log:     e.Log,
+		RootErr: e.RootErr,
 	}
 
-	log.Println(string(jsonAppErr))
+	errJson, _ := json.MarshalIndent(&errLog, "", "\t")
+	log.Println("\n", string(errJson))
+	//log.Println(string(jsonAppErr))
 }
 
 func NewErrorResponse(statusCode int, key, msg, log string, rootErr error) *AppError {
@@ -96,12 +99,21 @@ func NewNotFoundError(entity string, e error) *AppError {
 	)
 }
 
-func NewExistingError(entity string, e error) *AppError {
+func NewExistingError(entity string) *AppError {
 	return NewErrorResponse(
 		http.StatusUnprocessableEntity,
 		"EXISTING",
 		fmt.Sprintf("%v already exist", entity),
-		e.Error(),
-		e,
+		fmt.Sprintf("%v already exist", entity),
+		nil,
 	)
+}
+
+func NewValidationError(err []*ValidationError) *AppError {
+	return &AppError{
+		StatusCode:      http.StatusUnprocessableEntity,
+		Key:             "VALIDATION_ERROR",
+		Message:         err[0].Message,
+		ValidationError: err,
+	}
 }
