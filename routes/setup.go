@@ -7,6 +7,7 @@ import (
 )
 
 func SetupRoutes(appCtx appctx.AppContext, router *gin.Engine) {
-	v1 := router.Group("/v1")
-	routesv1.UserRoutes(appCtx, v1)
+	v1 := router.Group("/api/v1")
+	routesv1.NewAuthRoutes(appCtx, v1)
+	routesv1.NewUserRoutes(appCtx, v1)
 }
