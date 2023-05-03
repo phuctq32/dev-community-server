@@ -2,20 +2,24 @@ package business
 
 import (
 	"context"
-	"dev_community_server/components/hasher"
 	userEntity "dev_community_server/modules/user/entity"
 )
 
 type AuthRepository interface {
-	FindByEmail(ctx context.Context, email string) (*userEntity.User, error)
+	FindOne(ctx context.Context, filter map[string]interface{}) (*userEntity.User, error)
 	Create(ctx context.Context, data *userEntity.UserCreate) error
+}
+
+type PasswordHasher interface {
+	HashPassword(password string) (string, error)
+	ComparePassword(hashedPassword, password string) bool
 }
 
 type authBusiness struct {
 	repo AuthRepository
-	hash hasher.PasswordHasher
+	hash PasswordHasher
 }
 
-func NewAuthBusiness(repo AuthRepository, hash hasher.PasswordHasher) *authBusiness {
+func NewAuthBusiness(repo AuthRepository, hash PasswordHasher) *authBusiness {
 	return &authBusiness{repo: repo, hash: hash}
 }
