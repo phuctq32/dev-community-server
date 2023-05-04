@@ -2,6 +2,7 @@ package routesv1
 
 import (
 	"dev_community_server/components/appctx"
+	"dev_community_server/middlewares"
 	ginuser "dev_community_server/modules/user/transport/api"
 	"github.com/gin-gonic/gin"
 )
@@ -11,7 +12,7 @@ func NewUserRoutes(appCtx appctx.AppContext, v *gin.RouterGroup) {
 
 	userRouter := v.Group("/users")
 	{
-		userRouter.GET("/:id", userHandler.GetUserById())
+		userRouter.GET("/:id", middlewares.Authorize(appCtx), userHandler.GetUserById())
 		userRouter.PATCH("/:id", userHandler.UpdateUser())
 	}
 }
