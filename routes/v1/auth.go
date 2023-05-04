@@ -12,5 +12,6 @@ func NewAuthRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 	authRouter := group.Group("/auth")
 	{
 		authRouter.POST("/signup", authHandler.RegisterHandler())
+		authRouter.POST("/login", authHandler.LoginHandler())
 	}
 }

@@ -2,6 +2,7 @@ package business
 
 import (
 	"context"
+	"dev_community_server/components/jwt"
 	userEntity "dev_community_server/modules/user/entity"
 )
 
@@ -16,10 +17,22 @@ type PasswordHasher interface {
 }
 
 type authBusiness struct {
-	repo AuthRepository
-	hash PasswordHasher
+	repo          AuthRepository
+	hash          PasswordHasher
+	tokenProvider jwt.TokenProvider
+	tokenExpiry   int
 }
 
-func NewAuthBusiness(repo AuthRepository, hash PasswordHasher) *authBusiness {
-	return &authBusiness{repo: repo, hash: hash}
+func NewAuthBusiness(
+	repo AuthRepository,
+	hash PasswordHasher,
+	tokenProvider jwt.TokenProvider,
+	tokenExpiry int,
+) *authBusiness {
+	return &authBusiness{
+		repo:          repo,
+		hash:          hash,
+		tokenProvider: tokenProvider,
+		tokenExpiry:   tokenExpiry,
+	}
 }

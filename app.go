@@ -13,7 +13,7 @@ import (
 func Bootstrap() {
 	// Load Configs
 	appConfigs := configs.NewAppConfigs()
-	appCtx := appctx.NewAppContext(appConfigs.GetMongoDbConnection(), common.NewValidator())
+	appCtx := appctx.NewAppContext(appConfigs.GetMongoDbConnection(), common.NewValidator(), *appConfigs.GetSecretKey())
 
 	// Gin setup
 	router := gin.Default()
@@ -21,7 +21,7 @@ func Bootstrap() {
 	routes.SetupRoutes(appCtx, router)
 
 	// Start
-	err := router.Run(fmt.Sprintf(":%v", appConfigs.Port))
+	err := router.Run(fmt.Sprintf(":%v", *appConfigs.GetPort()))
 	if err != nil {
 		panic(err)
 	}

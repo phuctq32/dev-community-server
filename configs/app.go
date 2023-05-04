@@ -8,14 +8,18 @@ import (
 
 type AppConfig interface {
 	GetMongoDbConnection() *mongo.Database
+	GetPort() *int
+	GetSecretKey() *string
 }
 
 type appConfigs struct {
 	DbConfigs `mapstructure:",squash"`
-	Port      string `mapstructure:"PORT"`
+	Port      int    `mapstructure:"PORT"`
+	SecretKey string `mapstructure:"SECRET_KEY"`
 }
 
-func NewAppConfigs() (configs *appConfigs) {
+func NewAppConfigs() AppConfig {
+	var configs *appConfigs
 	viper.AddConfigPath(".")
 	viper.SetConfigFile(".env")
 
@@ -27,5 +31,13 @@ func NewAppConfigs() (configs *appConfigs) {
 		log.Fatal(err)
 	}
 
-	return
+	return configs
+}
+
+func (config *appConfigs) GetPort() *int {
+	return &config.Port
+}
+
+func (config *appConfigs) GetSecretKey() *string {
+	return &config.SecretKey
 }
