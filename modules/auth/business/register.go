@@ -39,7 +39,7 @@ func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCrea
 	verifyCode := hex.EncodeToString(b)
 
 	mailConfig := mailer.NewEmailConfigWithDynamicTemplate(
-		"phuctq32@gmail.com",
+		*biz.appCtx.GetSendGridConfigs().GetEmailFrom(),
 		data.Email,
 		"Verify email",
 		*biz.appCtx.GetSendGridConfigs().GetVerifyTemplateId(),

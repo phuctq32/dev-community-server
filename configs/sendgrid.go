@@ -1,6 +1,7 @@
 package configs
 
 type SendGridConfigs interface {
+	GetEmailFrom() *string
 	GetApiKey() *string
 	GetVerifyTemplateId() *string
 }
@@ -16,4 +17,8 @@ func (configs *appConfigs) GetApiKey() *string {
 
 func (configs *appConfigs) GetVerifyTemplateId() *string {
 	return &configs.VerifyTemplateId
+}
+
+func (configs *appConfigs) GetEmailFrom() *string {
+	return &configs.Email
 }
