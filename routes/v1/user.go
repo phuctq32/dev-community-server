@@ -12,7 +12,12 @@ func NewUserRoutes(appCtx appctx.AppContext, v *gin.RouterGroup) {
 
 	userRouter := v.Group("/users")
 	{
-		userRouter.GET("/:id", middlewares.Authorize(appCtx), userHandler.GetUserById())
-		userRouter.PATCH("/:id", userHandler.UpdateUser())
+		userRouter.GET("/:id", userHandler.GetUserById())
+	}
+
+	userProtectedRouter := userRouter.Use(middlewares.Authorize(appCtx))
+	{
+		userProtectedRouter.PATCH("/:id/update", userHandler.UpdateUser())
+		userProtectedRouter.PATCH("/:id/change_password", userHandler.ChangePasswordHandler())
 	}
 }

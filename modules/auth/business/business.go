@@ -3,6 +3,7 @@ package business
 import (
 	"context"
 	"dev_community_server/components/appctx"
+	"dev_community_server/components/hasher"
 	"dev_community_server/components/jwt"
 	"dev_community_server/components/mailer"
 	userEntity "dev_community_server/modules/user/entity"
@@ -14,15 +15,10 @@ type AuthRepository interface {
 	Update(ctx context.Context, id string, data map[string]interface{}) error
 }
 
-type PasswordHasher interface {
-	HashPassword(password string) (string, error)
-	ComparePassword(hashedPassword, password string) bool
-}
-
 type authBusiness struct {
 	appCtx        appctx.AppContext
 	repo          AuthRepository
-	hash          PasswordHasher
+	hash          hasher.MyHash
 	jwtProvider   jwt.TokenProvider
 	jwtExpiry     int
 	emailProvider mailer.EmailProvider
@@ -31,7 +27,7 @@ type authBusiness struct {
 func NewAuthBusiness(
 	appCtx appctx.AppContext,
 	repo AuthRepository,
-	hash PasswordHasher,
+	hash hasher.MyHash,
 	tokenProvider jwt.TokenProvider,
 	tokenExpiry int,
 	emailProvider mailer.EmailProvider,

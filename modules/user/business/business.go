@@ -2,6 +2,7 @@ package business
 
 import (
 	"context"
+	"dev_community_server/components/hasher"
 	"dev_community_server/modules/user/entity"
 )
 
@@ -13,8 +14,9 @@ type UserRepository interface {
 
 type userBusiness struct {
 	repo UserRepository
+	hash hasher.MyHash
 }
 
-func NewUserBusiness(repo UserRepository) *userBusiness {
-	return &userBusiness{repo: repo}
+func NewUserBusiness(repo UserRepository, hash hasher.MyHash) *userBusiness {
+	return &userBusiness{repo: repo, hash: hash}
 }
