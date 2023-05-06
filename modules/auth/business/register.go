@@ -2,8 +2,12 @@ package business
 
 import (
 	"context"
+	"crypto/rand"
 	"dev_community_server/common"
+	"dev_community_server/components/mailer"
 	userEntity "dev_community_server/modules/user/entity"
+	"encoding/hex"
+	"fmt"
 )
 
 func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCreate) error {
@@ -25,6 +29,29 @@ func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCrea
 		return common.NewServerError(err)
 	}
 
+	// Generate random code to verify email
+	b := make([]byte, 32)
+	_, err = rand.Read(b)
+	if err != nil {
+		return common.NewServerError(err)
+	}
+
+	verifyCode := hex.EncodeToString(b)
+
+	mailConfig := mailer.NewEmailConfigWithDynamicTemplate(
+		"phuctq32@gmail.com",
+		data.Email,
+		"Verify email",
+		*biz.appCtx.GetSendGridConfigs().GetVerifyTemplateId(),
+		map[string]interface{}{
+			"username": data.FirstName + " " + data.LastName,
+			"url":      fmt.Sprintf("http://localhost:8080/auth/verification/%v", verifyCode),
+		},
+	)
+	if err = biz.emailProvider.SendEmail(mailConfig); err != nil {
+		return common.NewServerError(err)
+	}
+	data.VerifiedToken = verifyCode
 	if err = biz.repo.Create(ctx, data); err != nil {
 		return err
 	}

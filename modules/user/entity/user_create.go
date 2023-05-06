@@ -11,4 +11,5 @@ type UserCreate struct {
 	Password        string      `json:"password" validate:"required,min=6,alphanumunicode"`
 	ConfirmPassword string      `json:"confirm_password" validate:"eqfield=Password"`
 	Birthday        common.Date `json:"birthday"`
+	VerifiedToken   string
 }

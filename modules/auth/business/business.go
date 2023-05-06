@@ -11,6 +11,7 @@ import (
 type AuthRepository interface {
 	FindOne(ctx context.Context, filter map[string]interface{}) (*userEntity.User, error)
 	Create(ctx context.Context, data *userEntity.UserCreate) error
+	Update(ctx context.Context, id string, data map[string]interface{}) error
 }
 
 type PasswordHasher interface {

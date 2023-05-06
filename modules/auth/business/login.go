@@ -17,7 +17,11 @@ func (biz *authBusiness) Login(ctx context.Context, data *entity.UserLogin) (*st
 	}
 
 	tokenPayload := jwt.Payload{UserId: user.Id.Hex()}
-	tokenStr, err := biz.tokenProvider.GenerateAccessToken(tokenPayload, biz.tokenExpiry)
+	tokenStr, err := biz.jwtProvider.GenerateAccessToken(tokenPayload, biz.jwtExpiry)
+	if err != nil {
+		return nil, err
+	}
+
 	if err != nil {
 		return nil, err
 	}

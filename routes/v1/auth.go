@@ -13,5 +13,6 @@ func NewAuthRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 	{
 		authRouter.POST("/signup", authHandler.RegisterHandler())
 		authRouter.POST("/login", authHandler.LoginHandler())
+		authRouter.POST("/verification/:verifiedToken", authHandler.VerifyEmail())
 	}
 }
