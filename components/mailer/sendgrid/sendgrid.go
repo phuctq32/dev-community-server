@@ -4,6 +4,7 @@ import (
 	"dev_community_server/components/mailer"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"log"
 )
 
 type sendGridService struct {
@@ -29,7 +30,8 @@ func (sg *sendGridService) SendEmail(config *mailer.EmailConfig) error {
 	config.Data["subject"] = config.Subject
 	personalization.DynamicTemplateData = config.Data
 
-	_, err := client.Send(mailData)
+	res, err := client.Send(mailData)
+	log.Printf("sent mail%+v\n", res)
 	if err != nil {
 		return err
 	}

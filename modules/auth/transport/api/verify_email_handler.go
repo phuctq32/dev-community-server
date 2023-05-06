@@ -7,7 +7,7 @@ import (
 
 func (hdl *authHandler) VerifyEmail() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		verifiedToken := c.Param("verifiedToken")
+		verifiedToken := c.Param("verified_token")
 
 		if err := hdl.business.VerifyEmail(c.Request.Context(), verifiedToken); err != nil {
 			panic(err)

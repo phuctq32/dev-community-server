@@ -18,7 +18,7 @@ type appConfigs struct {
 	sgConfigs `mapstructure:",squash"`
 	Port      int    `mapstructure:"PORT"`
 	SecretKey string `mapstructure:"SECRET_KEY"`
-	Email     string `mapstructure:"EMAIL"`
+	Email     string `mapstructure:"EMAIL_FROM"`
 }
 
 func NewAppConfigs() AppConfig {

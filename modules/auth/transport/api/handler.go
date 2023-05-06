@@ -16,6 +16,8 @@ type AuthBusiness interface {
 	Register(ctx context.Context, data *userEntity.UserCreate) error
 	Login(ctx context.Context, data *entity.UserLogin) (*string, error)
 	VerifyEmail(ctx context.Context, verifyToken string) error
+	ForgotPassword(ctx context.Context, email string) error
+	ResetPassword(ctx context.Context, resetToken, newPassword string) error
 }
 
 type authHandler struct {
