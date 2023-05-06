@@ -32,6 +32,10 @@ func Authorize(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
+		if !user.IsVerified {
+			panic(common.NewCustomBadRequestError("user not verified"))
+		}
+
 		c.Set("user", user)
 		c.Next()
 	}
