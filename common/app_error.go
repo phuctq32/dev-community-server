@@ -3,6 +3,7 @@ package common
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	"log"
 	"net/http"
 )
@@ -74,6 +75,10 @@ func NewBadRequestError(msg string, e error) *AppError {
 		Log:        e.Error(),
 		RootErr:    e,
 	}
+}
+
+func NewCustomBadRequestError(msg string) *AppError {
+	return NewBadRequestError(msg, errors.New(msg))
 }
 
 func NewNoPermissionError(e error) *AppError {

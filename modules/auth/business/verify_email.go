@@ -3,7 +3,6 @@ package business
 import (
 	"context"
 	"dev_community_server/common"
-	"errors"
 	"time"
 )
 
@@ -14,7 +13,7 @@ func (biz *authBusiness) VerifyEmail(ctx context.Context, verifyToken string) er
 	}
 
 	if user.VerifiedToken.ExpiredAt.Before(time.Now()) {
-		return common.NewBadRequestError("Verification code expired", errors.New("verified token expired"))
+		return common.NewCustomBadRequestError("Verification code expired")
 	}
 
 	if err = biz.repo.Update(ctx, user.Id.Hex(), map[string]interface{}{

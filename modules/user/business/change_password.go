@@ -3,20 +3,24 @@ package business
 import (
 	"context"
 	"dev_community_server/common"
-	"errors"
+	"dev_community_server/modules/user/entity"
 )
 
-func (biz *userBusiness) ChangePassword(ctx context.Context, id string, newPassword string) error {
+func (biz *userBusiness) ChangePassword(ctx context.Context, id string, userChangePw *entity.UserChangePassword) error {
 	user, err := biz.repo.FindOne(ctx, map[string]interface{}{"id": id})
 	if err != nil {
 		return err
 	}
 
-	if biz.hash.ComparePassword(user.Password, newPassword) {
-		return common.NewBadRequestError("New password must not match to old password", errors.New("must not match to old password"))
+	if !biz.hash.ComparePassword(user.Password, *userChangePw.OldPassword) {
+		return common.NewCustomBadRequestError("Old password incorrect")
 	}
 
-	hashedPassword, err := biz.hash.HashPassword(newPassword)
+	if *userChangePw.OldPassword == *userChangePw.NewPassword {
+		return common.NewCustomBadRequestError("New password must be different than old one")
+	}
+
+	hashedPassword, err := biz.hash.HashPassword(*userChangePw.NewPassword)
 	if err != nil {
 		return err
 	}

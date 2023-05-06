@@ -59,6 +59,8 @@ func formatValidationError(err validator.FieldError) *ValidationError {
 		res.Message = fmt.Sprintf("Must be greater than or equal %v", err.Param())
 	case "eqfield":
 		res.Message = fmt.Sprintf("Does not match to %v", strings.ToLower(err.Param()))
+	case "nefield":
+		res.Message = fmt.Sprintf("Must be not match to %v", strings.ToLower(err.Param()))
 	case "min":
 		if _, ok := res.Value.(int); ok {
 			res.Message = fmt.Sprintf("Must be greater than or equal %v", err.Param())
@@ -67,7 +69,6 @@ func formatValidationError(err validator.FieldError) *ValidationError {
 		} else {
 			res.Message = fmt.Sprintf("Min length of array is %v", err.Param())
 		}
-
 	}
 
 	return res

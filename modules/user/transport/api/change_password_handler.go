@@ -9,7 +9,7 @@ import (
 
 func (hdl *userHandler) ChangePasswordHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var user entity.UserUpdate
+		var user entity.UserChangePassword
 		if err := c.ShouldBind(&user); err != nil {
 			panic(err)
 		}
@@ -18,7 +18,7 @@ func (hdl *userHandler) ChangePasswordHandler() gin.HandlerFunc {
 			panic(common.NewValidationError(err))
 		}
 
-		if err := hdl.business.ChangePassword(c.Request.Context(), c.Param("id"), *user.Password); err != nil {
+		if err := hdl.business.ChangePassword(c.Request.Context(), c.Param("id"), &user); err != nil {
 			panic(err)
 		}
 

@@ -12,7 +12,7 @@ import (
 type UserBusiness interface {
 	GetUserById(ctx context.Context, id string) (user *entity.User, err error)
 	UpdateUser(ctx context.Context, id string, data *entity.UserUpdate) error
-	ChangePassword(ctx context.Context, id string, newPassword string) error
+	ChangePassword(ctx context.Context, id string, user *entity.UserChangePassword) error
 }
 
 type userHandler struct {
