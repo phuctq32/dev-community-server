@@ -19,7 +19,7 @@ type userHandler struct {
 }
 
 func NewUserHandler(appCtx appctx.AppContext) *userHandler {
-	repo := repository.NewUserRepository(appCtx.GetDbConnection())
+	repo := repository.NewUserRepository(appCtx.GetMongoDbConnection())
 
 	biz := business.NewUserBusiness(repo)
 	return &userHandler{appCtx: appCtx, business: biz}
