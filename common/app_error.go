@@ -17,9 +17,7 @@ type AppError struct {
 }
 
 type AppErrorLog struct {
-	//StatusCode int    `json:"-"`
-	Key string `json:"error_key"`
-	//Message    string `json:"-"`
+	Key             string             `json:"error_key"`
 	RootErr         error              `json:"root_error"`
 	Log             string             `json:"log"`
 	ValidationError []*ValidationError `json:"validation_error,omitempty"`
@@ -46,7 +44,6 @@ func (e AppError) Logging() {
 
 	errJson, _ := json.MarshalIndent(&errLog, "", "\t")
 	log.Println("\n", string(errJson))
-	//log.Println(string(jsonAppErr))
 }
 
 func NewErrorResponse(statusCode int, key, msg, log string, rootErr error) *AppError {

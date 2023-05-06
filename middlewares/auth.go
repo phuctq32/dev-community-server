@@ -17,7 +17,7 @@ func Authorize(appCtx appctx.AppContext) gin.HandlerFunc {
 		// Extract token from header
 		parts := strings.Split(c.GetHeader("Authorization"), " ")
 		if parts[0] != "Bearer" || len(parts) < 2 || strings.TrimSpace(parts[1]) == "" {
-			panic(common.NewServerError(errors.New("Wrong authorization header")))
+			panic(common.NewNoPermissionError(errors.New("Wrong authorization header")))
 		}
 
 		userRepo := repository.NewUserRepository(appCtx.GetMongoDbConnection())
