@@ -2,7 +2,9 @@ package business
 
 import (
 	"context"
+	"dev_community_server/components/appctx"
 	"dev_community_server/components/jwt"
+	"dev_community_server/components/mailer"
 	userEntity "dev_community_server/modules/user/entity"
 )
 
@@ -17,22 +19,28 @@ type PasswordHasher interface {
 }
 
 type authBusiness struct {
+	appCtx        appctx.AppContext
 	repo          AuthRepository
 	hash          PasswordHasher
-	tokenProvider jwt.TokenProvider
-	tokenExpiry   int
+	jwtProvider   jwt.TokenProvider
+	jwtExpiry     int
+	emailProvider mailer.EmailProvider
 }
 
 func NewAuthBusiness(
+	appCtx appctx.AppContext,
 	repo AuthRepository,
 	hash PasswordHasher,
 	tokenProvider jwt.TokenProvider,
 	tokenExpiry int,
+	emailProvider mailer.EmailProvider,
 ) *authBusiness {
 	return &authBusiness{
+		appCtx:        appCtx,
 		repo:          repo,
 		hash:          hash,
-		tokenProvider: tokenProvider,
-		tokenExpiry:   tokenExpiry,
+		jwtProvider:   tokenProvider,
+		jwtExpiry:     tokenExpiry,
+		emailProvider: emailProvider,
 	}
 }

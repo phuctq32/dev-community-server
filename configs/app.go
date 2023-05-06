@@ -10,12 +10,15 @@ type AppConfig interface {
 	GetMongoDbConnection() *mongo.Database
 	GetPort() *int
 	GetSecretKey() *string
+	SendGridConfigs
 }
 
 type appConfigs struct {
 	DbConfigs `mapstructure:",squash"`
+	sgConfigs `mapstructure:",squash"`
 	Port      int    `mapstructure:"PORT"`
 	SecretKey string `mapstructure:"SECRET_KEY"`
+	Email     string `mapstructure:"EMAIL"`
 }
 
 func NewAppConfigs() AppConfig {
@@ -41,3 +44,7 @@ func (config *appConfigs) GetPort() *int {
 func (config *appConfigs) GetSecretKey() *string {
 	return &config.SecretKey
 }
+
+//func (config *appConfigs) GetEmail() *string {
+//	return &config.Email
+//}

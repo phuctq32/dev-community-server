@@ -2,33 +2,38 @@ package appctx
 
 import (
 	"dev_community_server/common"
+	"dev_community_server/configs"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type AppContext interface {
-	GetDbConnection() *mongo.Database
+	GetMongoDbConnection() *mongo.Database
 	GetValidator() common.Validator
-	GetSecretKey() string
+	GetSecretKey() *string
+	GetSendGridConfigs() configs.SendGridConfigs
 }
 
 type appContext struct {
-	db        *mongo.Database
+	configs   configs.AppConfig
 	validator common.Validator
-	secretKey string
 }
 
-func NewAppContext(db *mongo.Database, validator common.Validator, secretKey string) *appContext {
-	return &appContext{db: db, validator: validator, secretKey: secretKey}
+func NewAppContext(configs configs.AppConfig, validator common.Validator) *appContext {
+	return &appContext{configs: configs, validator: validator}
 }
 
-func (appCtx *appContext) GetDbConnection() *mongo.Database {
-	return appCtx.db
+func (appCtx *appContext) GetMongoDbConnection() *mongo.Database {
+	return appCtx.configs.GetMongoDbConnection()
 }
 
 func (appCtx *appContext) GetValidator() common.Validator {
 	return appCtx.validator
 }
 
-func (appCtx *appContext) GetSecretKey() string {
-	return appCtx.secretKey
+func (appCtx *appContext) GetSecretKey() *string {
+	return appCtx.configs.GetSecretKey()
+}
+
+func (appCtx *appContext) GetSendGridConfigs() configs.SendGridConfigs {
+	return appCtx.configs
 }

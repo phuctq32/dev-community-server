@@ -13,7 +13,7 @@ import (
 func Bootstrap() {
 	// Load Configs
 	appConfigs := configs.NewAppConfigs()
-	appCtx := appctx.NewAppContext(appConfigs.GetMongoDbConnection(), common.NewValidator(), *appConfigs.GetSecretKey())
+	appCtx := appctx.NewAppContext(appConfigs, common.NewValidator())
 
 	// Gin setup
 	router := gin.Default()
