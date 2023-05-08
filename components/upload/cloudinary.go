@@ -25,12 +25,10 @@ func NewCloudinaryProvider(cldConfig configs.CloudinaryConfig) (*cloudinaryProvi
 	return &cloudinaryProvider{cloudinary: cld}, nil
 }
 
-func (cld *cloudinaryProvider) Upload(ctx context.Context, file interface{}, folder string) (*string, error) {
-	//ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-
+func (cld *cloudinaryProvider) Upload(ctx context.Context, file interface{}) (*string, error) {
 	uploadRes, err := cld.cloudinary.Upload.Upload(ctx, file, uploader.UploadParams{
 		PublicID: fmt.Sprintf("%v", time.Now().Nanosecond()),
-		Folder:   folder,
+		//Folder:   folder,
 	})
 	if err != nil {
 		return nil, err

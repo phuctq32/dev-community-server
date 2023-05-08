@@ -10,4 +10,5 @@ func SetupRoutes(appCtx appctx.AppContext, router *gin.Engine) {
 	v1 := router.Group("/api/v1")
 	routesv1.NewAuthRoutes(appCtx, v1)
 	routesv1.NewUserRoutes(appCtx, v1)
+	routesv1.NewUploadRoutes(appCtx, v1)
 }

@@ -29,7 +29,7 @@ func NewAuthHandler(appCtx appctx.AppContext) *authHandler {
 	authRepo := userRepo.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
 	hashService := hasher.NewBcryptHash(12)
 	jwtProvider := jwt.NewJwtProvider(*appCtx.GetSecretKey())
-	sgService := sendgrid.NewSendGridService(*appCtx.GetAppConfig().GetSendGridConfig().GetApiKey())
+	sgService := sendgrid.NewSendGridProvider(*appCtx.GetAppConfig().GetSendGridConfig().GetApiKey())
 	biz := business.NewAuthBusiness(appCtx, authRepo, hashService, jwtProvider, 30*24*60, sgService)
 
 	return &authHandler{appCtx: appCtx, business: biz}
