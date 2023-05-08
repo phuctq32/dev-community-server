@@ -28,7 +28,7 @@ func (hdl *uploadHandler) UploadSingleImage() gin.HandlerFunc {
 			panic(err)
 		}
 
-		url, err := hdl.business.UploadImage(c.Request.Context(), fileHeader)
+		url, err := hdl.business.UploadImage(c.Request.Context(), dataBytes)
 		if err != nil {
 			panic(err)
 		}

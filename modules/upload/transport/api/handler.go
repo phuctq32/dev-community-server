@@ -8,7 +8,7 @@ import (
 )
 
 type UploadBusiness interface {
-	UploadImage(ctx context.Context, data interface{}) (*string, error)
+	UploadImage(ctx context.Context, data []byte) (*string, error)
 	//UploadMultiple(data [][]byte) (*string, error)
 }
 
