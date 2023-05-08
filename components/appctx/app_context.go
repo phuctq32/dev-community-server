@@ -3,14 +3,12 @@ package appctx
 import (
 	"dev_community_server/common"
 	"dev_community_server/configs"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type AppContext interface {
-	GetMongoDbConnection() *mongo.Database
 	GetValidator() common.Validator
 	GetSecretKey() *string
-	GetSendGridConfigs() configs.SendGridConfigs
+	GetAppConfig() configs.AppConfig
 }
 
 type appContext struct {
@@ -22,8 +20,8 @@ func NewAppContext(configs configs.AppConfig, validator common.Validator) *appCo
 	return &appContext{configs: configs, validator: validator}
 }
 
-func (appCtx *appContext) GetMongoDbConnection() *mongo.Database {
-	return appCtx.configs.GetMongoDbConnection()
+func (appCtx *appContext) GetAppConfig() configs.AppConfig {
+	return appCtx.configs
 }
 
 func (appCtx *appContext) GetValidator() common.Validator {
@@ -32,8 +30,4 @@ func (appCtx *appContext) GetValidator() common.Validator {
 
 func (appCtx *appContext) GetSecretKey() *string {
 	return appCtx.configs.GetSecretKey()
-}
-
-func (appCtx *appContext) GetSendGridConfigs() configs.SendGridConfigs {
-	return appCtx.configs
 }

@@ -9,17 +9,21 @@ import (
 	"time"
 )
 
-type DbConfigs struct {
+type MongoDBConfig interface {
+	GetConnection() *mongo.Database
+}
+
+type mongoDBConfig struct {
 	MongoUsername string `mapstructure:"MONGO_USERNAME"`
 	MongoPassword string `mapstructure:"MONGO_PASSWORD"`
 	MongoDbName   string `mapstructure:"MONGO_DB_NAME"`
 }
 
-func (configs *appConfigs) GetMongoDbConnection() *mongo.Database {
+func (config *mongoDBConfig) GetConnection() *mongo.Database {
 	mongoUri := fmt.Sprintf(
 		"mongodb+srv://%v:%v@cluster0.g528okd.mongodb.net/?retryWrites=true&w=majority",
-		configs.MongoUsername,
-		configs.MongoPassword,
+		config.MongoUsername,
+		config.MongoPassword,
 	)
 
 	opts := options.Client().ApplyURI(mongoUri)
@@ -31,5 +35,5 @@ func (configs *appConfigs) GetMongoDbConnection() *mongo.Database {
 
 	log.Println("DB Connected")
 
-	return client.Database(configs.MongoDbName)
+	return client.Database(config.MongoDbName)
 }

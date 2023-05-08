@@ -20,7 +20,7 @@ func Authorize(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(common.NewNoPermissionError(errors.New("Wrong authorization header")))
 		}
 
-		userRepo := repository.NewUserRepository(appCtx.GetMongoDbConnection())
+		userRepo := repository.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
 
 		payload, err := tokenProvider.Decode(parts[1])
 		if err != nil {

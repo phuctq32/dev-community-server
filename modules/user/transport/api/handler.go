@@ -21,7 +21,7 @@ type userHandler struct {
 }
 
 func NewUserHandler(appCtx appctx.AppContext) *userHandler {
-	repo := repository.NewUserRepository(appCtx.GetMongoDbConnection())
+	repo := repository.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
 	hash := hasher.NewBcryptHash(10)
 
 	biz := business.NewUserBusiness(repo, hash)

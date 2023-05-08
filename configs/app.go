@@ -2,23 +2,23 @@ package configs
 
 import (
 	"github.com/spf13/viper"
-	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 )
 
 type AppConfig interface {
-	GetMongoDbConnection() *mongo.Database
+	GetMongoDbConfig() MongoDBConfig
 	GetPort() *int
 	GetSecretKey() *string
-	SendGridConfigs
+	GetSendGridConfig() SendGridConfig
+	GetCloudinaryConfig() CloudinaryConfig
 }
 
 type appConfigs struct {
-	DbConfigs `mapstructure:",squash"`
-	sgConfigs `mapstructure:",squash"`
-	Port      int    `mapstructure:"PORT"`
-	SecretKey string `mapstructure:"SECRET_KEY"`
-	Email     string `mapstructure:"EMAIL_FROM"`
+	mongoDBConfig    `mapstructure:",squash"`
+	sendgridConfig   `mapstructure:",squash"`
+	cloudinaryConfig `mapstructure:",squash"`
+	Port             int    `mapstructure:"PORT"`
+	SecretKey        string `mapstructure:"SECRET_KEY"`
 }
 
 func NewAppConfigs() AppConfig {
@@ -45,6 +45,14 @@ func (config *appConfigs) GetSecretKey() *string {
 	return &config.SecretKey
 }
 
-//func (config *appConfigs) GetEmail() *string {
-//	return &config.Email
-//}
+func (config *appConfigs) GetMongoDbConfig() MongoDBConfig {
+	return &config.mongoDBConfig
+}
+
+func (config *appConfigs) GetSendGridConfig() SendGridConfig {
+	return &config.sendgridConfig
+}
+
+func (config *appConfigs) GetCloudinaryConfig() CloudinaryConfig {
+	return &config.cloudinaryConfig
+}
