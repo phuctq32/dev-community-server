@@ -11,6 +11,7 @@ func NewUploadRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 
 	uploadRouter := group.Group("/upload")
 	{
-		uploadRouter.POST("/image", uploadHandler.UploadSingleImage())
+		uploadRouter.POST("/images/single", uploadHandler.UploadSingleImage())
+		uploadRouter.POST("/images/multiple", uploadHandler.UploadMultipleImage())
 	}
 }
