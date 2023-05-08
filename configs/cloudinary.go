@@ -7,7 +7,7 @@ type CloudinaryConfig interface {
 }
 
 type cloudinaryConfig struct {
-	ApiKey    string `mapstructure:"222345215317385"`
+	ApiKey    string `mapstructure:"CLOUDINARY_API_KEY"`
 	ApiSecret string `mapstructure:"CLOUDINARY_API_SECRET"`
 	CloudName string `mapstructure:"CLOUDINARY_CLOUD_NAME"`
 }

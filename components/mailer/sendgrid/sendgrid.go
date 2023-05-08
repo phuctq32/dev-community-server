@@ -7,15 +7,15 @@ import (
 	"log"
 )
 
-type sendGridService struct {
+type sendGridProvider struct {
 	ApiKey string
 }
 
-func NewSendGridService(key string) *sendGridService {
-	return &sendGridService{ApiKey: key}
+func NewSendGridProvider(key string) *sendGridProvider {
+	return &sendGridProvider{ApiKey: key}
 }
 
-func (sg *sendGridService) SendEmail(config *mailer.EmailConfig) error {
+func (sg *sendGridProvider) SendEmail(config *mailer.EmailConfig) error {
 	client := sendgrid.NewSendClient(sg.ApiKey)
 
 	fromEmail := mail.NewEmail("Dev Community", config.From)
