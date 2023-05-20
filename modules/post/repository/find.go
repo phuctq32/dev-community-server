@@ -22,9 +22,9 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 	var pipeline []bson.M
 	// Paginantion
 	if filter.Page != nil && filter.Limit != nil {
-		aggSkip := bson.M{"$skip": int64(math.Abs(float64(*filter.Page-1))) * int64(*filter.Limit)}
-		aggLimit := bson.M{"$limit": int64(*filter.Limit)}
-		pipeline = append(pipeline, aggSkip, aggLimit)
+		skipStage := bson.M{"$skip": int64(math.Abs(float64(*filter.Page-1))) * int64(*filter.Limit)}
+		limitStage := bson.M{"$limit": int64(*filter.Limit)}
+		pipeline = append(pipeline, skipStage, limitStage)
 	}
 
 	// Other condition
@@ -33,7 +33,8 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 		for i, condition := range filter.Other {
 			andStage = append(andStage, bson.M{i: condition})
 		}
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": andStage}})
+		matchStage := bson.M{"$match": bson.M{"$and": andStage}}
+		pipeline = append(pipeline, matchStage)
 	}
 
 	// Populate author
@@ -45,21 +46,21 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 			"avatar":     1,
 		}},
 	}
-	aggPopulate := bson.M{"$lookup": bson.M{
+	populateStage := bson.M{"$lookup": bson.M{
 		"from":         "users",
 		"localField":   "author_id",
 		"foreignField": "_id",
 		"pipeline":     userPipeline,
 		"as":           "author",
 	}}
-	aggUnwind := bson.M{"$unwind": "$author"}
-	pipeline = append(pipeline, aggPopulate, aggUnwind)
+	unwindStage := bson.M{"$unwind": "$author"}
+	pipeline = append(pipeline, populateStage, unwindStage)
 
 	// Project
-	aggProject := bson.M{"$project": bson.M{
+	projectStage := bson.M{"$project": bson.M{
 		"author_id": 0,
 	}}
-	pipeline = append(pipeline, aggProject)
+	pipeline = append(pipeline, projectStage)
 
 	cursor, err := repo.postColl.Aggregate(ctx, pipeline)
 	if err != nil {

@@ -5,31 +5,32 @@ import (
 	"dev_community_server/common"
 	"dev_community_server/components/jwt"
 	"dev_community_server/modules/auth/entity"
+	userEntity "dev_community_server/modules/user/entity"
 )
 
-func (biz *authBusiness) Login(ctx context.Context, data *entity.UserLogin) (*string, error) {
+func (biz *authBusiness) Login(ctx context.Context, data *entity.UserLogin) (*string, *userEntity.User, error) {
 	user, err := biz.repo.FindOne(ctx, map[string]interface{}{"email": data.Email})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if ok := biz.hash.ComparePassword(user.Password, data.Password); !ok {
-		return nil, entity.ErrorLoginInvalid
+		return nil, nil, entity.ErrorLoginInvalid
 	}
 
 	if !user.IsVerified {
-		return nil, common.NewCustomBadRequestError("User not verified")
+		return nil, nil, common.NewCustomBadRequestError("User not verified")
 	}
 
 	tokenPayload := jwt.Payload{UserId: user.Id.Hex()}
 	tokenStr, err := biz.jwtProvider.GenerateAccessToken(tokenPayload, biz.jwtExpiry)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return tokenStr, nil
+	return tokenStr, user, nil
 }

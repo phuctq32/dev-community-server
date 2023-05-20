@@ -18,13 +18,14 @@ func (hdl *authHandler) LoginHandler() gin.HandlerFunc {
 			panic(common.NewValidationError(err))
 		}
 
-		token, err := hdl.business.Login(c.Request.Context(), &data)
+		token, user, err := hdl.business.Login(c.Request.Context(), &data)
 		if err != nil {
 			panic(err)
 		}
 
 		c.JSON(http.StatusOK, gin.H{
 			"token": token,
+			"user":  user,
 		})
 	}
 }
