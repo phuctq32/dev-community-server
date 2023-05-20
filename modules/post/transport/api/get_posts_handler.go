@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func (hdl *postHandler) SearchPost() gin.HandlerFunc {
+func (hdl *postHandler) GetPosts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var filter entity.Filter
 		limit, gotLimit := c.GetQuery("limit")
@@ -35,10 +35,6 @@ func (hdl *postHandler) SearchPost() gin.HandlerFunc {
 		} else {
 			filter.Page = nil
 			filter.Limit = nil
-		}
-
-		if search, ok := c.GetQuery("q"); ok {
-			filter.Search = &search
 		}
 
 		posts, err := hdl.business.GetPosts(c.Request.Context(), filter)
