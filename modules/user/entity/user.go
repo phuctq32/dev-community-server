@@ -12,29 +12,33 @@ type Token struct {
 
 type User struct {
 	common.ModelCommon `bson:",inline" json:",inline"`
-	Name               string    `bson:"name" json:"name"`
-	Email              string    `bson:"email" json:"email"`
-	Password           string    `bson:"password" json:"-"`
-	Birthday           time.Time `bson:"birthday" json:"birthday"`
-	VerifiedToken      *Token    `bson:"verified_token" json:"-"`
-	IsVerified         bool      `bson:"is_verified" json:"is_verified"`
+	FirstName          string     `bson:"first_name,omitempty" json:"first_name,omitempty"`
+	LastName           string     `bson:"last_name,omitempty" json:"last_name,omitempty"`
+	Email              string     `bson:"email,omitempty" json:"email,omitempty"`
+	Password           string     `bson:"password,omitempty" json:"-"`
+	Birthday           *time.Time `bson:"birthday,omitempty" json:"birthday,omitempty"`
+	VerifiedToken      *Token     `bson:"verified_token,omitempty" json:"-"`
+	IsVerified         bool       `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
 }
 
 func NewUser(user *UserCreate) *User {
+	now := time.Now()
+	birthday := time.Time(user.Birthday)
 	return &User{
 		ModelCommon: common.ModelCommon{
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
+			CreatedAt: &now,
+			UpdatedAt: &now,
 		},
-		Email:    user.Email,
-		Name:     user.FirstName + " " + user.LastName,
-		Password: user.Password,
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Password:  user.Password,
 		VerifiedToken: &Token{
 			Token:     user.VerifiedToken,
 			ExpiredAt: time.Now().Add(time.Duration(time.Hour * 24 * 7)),
 		},
 		IsVerified: false,
-		Birthday:   time.Time(user.Birthday),
+		Birthday:   &birthday,
 	}
 }
 

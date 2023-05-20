@@ -8,7 +8,7 @@ import (
 
 type PostRepository interface {
 	Create(ctx context.Context, data *entity.PostCreate) error
-	Find(ctx context.Context, filter map[string]interface{}) ([]*entity.Post, error)
+	Find(ctx context.Context, filter entity.Filter) ([]*entity.Post, error)
 }
 
 type UserRepository interface {

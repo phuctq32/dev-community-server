@@ -6,7 +6,12 @@ import (
 )
 
 func (biz *postBusiness) GetPostByUserId(ctx context.Context, userId string) ([]*entity.Post, error) {
-	posts, err := biz.postRepo.Find(ctx, map[string]interface{}{"author_id": userId})
+	filter := entity.Filter{
+		Limit: nil,
+		Page:  nil,
+		Other: map[string]interface{}{"author_id": userId},
+	}
+	posts, err := biz.postRepo.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
