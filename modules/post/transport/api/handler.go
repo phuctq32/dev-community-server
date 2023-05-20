@@ -13,6 +13,7 @@ type PostBusiness interface {
 	CreatePost(ctx context.Context, data *entity.PostCreate) error
 	GetPostByUserId(ctx context.Context, userId string) ([]*entity.Post, error)
 	GetPosts(ctx context.Context, filter entity.Filter) ([]*entity.Post, error)
+	UpdatePost(ctx context.Context, data *entity.PostUpdate) error
 }
 
 type postHandler struct {

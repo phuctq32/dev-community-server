@@ -96,3 +96,23 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 
 	return posts, nil
 }
+
+func (repo *postRepository) FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Post, error) {
+	var post entity.Post
+
+	if id, ok := filter["id"]; ok {
+		objId, err := primitive.ObjectIDFromHex(id.(string))
+		if err != nil {
+			return nil, err
+		}
+
+		filter["_id"] = objId
+		delete(filter, "id")
+	}
+
+	if err := repo.postColl.FindOne(ctx, filter).Decode(&post); err != nil {
+		return nil, err
+	}
+
+	return &post, nil
+}
