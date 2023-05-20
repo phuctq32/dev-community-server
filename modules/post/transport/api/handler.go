@@ -11,6 +11,7 @@ import (
 
 type PostBusiness interface {
 	CreatePost(ctx context.Context, data *entity.PostCreate) error
+	GetPostByUserId(ctx context.Context, userId string) ([]*entity.Post, error)
 }
 
 type postHandler struct {
