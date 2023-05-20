@@ -13,7 +13,7 @@ type Post struct {
 	Content            string              `bson:"content" json:"content"`
 	Images             []string            `bson:"images,omitempty" json:"images,omitempty"`
 	AuthorId           *primitive.ObjectID `bson:"author_id" json:"author_id,omitempty"`
-	Author             *userEntity.User    `bson:"-" json:"author,omitempty"`
+	Author             *userEntity.User    `bson:"author,omitempty" json:"author"`
 }
 
 func NewPost(data *PostCreate) *Post {

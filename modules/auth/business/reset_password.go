@@ -12,6 +12,10 @@ func (biz *authBusiness) ResetPassword(ctx context.Context, resetToken, newPassw
 		return err
 	}
 
+	if user == nil {
+		return common.NewNotFoundError("User", common.ErrNotFound)
+	}
+
 	hashedPassword, err := biz.hash.HashPassword(newPassword)
 	if err != nil {
 		return common.NewServerError(errors.New("Hash not success"))

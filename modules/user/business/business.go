@@ -3,6 +3,7 @@ package business
 import (
 	"context"
 	"dev_community_server/components/hasher"
+	postEntity "dev_community_server/modules/post/entity"
 	"dev_community_server/modules/user/entity"
 )
 
@@ -12,11 +13,16 @@ type UserRepository interface {
 	Update(ctx context.Context, id string, data map[string]interface{}) error
 }
 
-type userBusiness struct {
-	repo UserRepository
-	hash hasher.MyHash
+type PostRepository interface {
+	Find(ctx context.Context, filter postEntity.Filter) ([]*postEntity.Post, error)
 }
 
-func NewUserBusiness(repo UserRepository, hash hasher.MyHash) *userBusiness {
-	return &userBusiness{repo: repo, hash: hash}
+type userBusiness struct {
+	userRepo UserRepository
+	postRepo PostRepository
+	hash     hasher.MyHash
+}
+
+func NewUserBusiness(repo UserRepository, postRepo PostRepository, hash hasher.MyHash) *userBusiness {
+	return &userBusiness{userRepo: repo, postRepo: postRepo, hash: hash}
 }

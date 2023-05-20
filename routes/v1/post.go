@@ -13,7 +13,7 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 	postRouter := group.Group("/posts")
 	{
 		postRouter.GET("", postHandler.GetPosts())
-		postRouter.GET("/:userId", postHandler.GetPostByUserId())
+		postRouter.GET("/:id", postHandler.GetPostById())
 		postRouter.GET("/search", postHandler.SearchPost())
 	}
 

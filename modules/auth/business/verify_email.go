@@ -12,8 +12,12 @@ func (biz *authBusiness) VerifyEmail(ctx context.Context, verifyToken string) er
 		return err
 	}
 
+	if user == nil {
+		return common.NewCustomBadRequestError("Invalid token")
+	}
+
 	if user.VerifiedToken.ExpiredAt.Before(time.Now()) {
-		return common.NewCustomBadRequestError("Verification code expired")
+		return common.NewCustomBadRequestError("Verification token expired")
 	}
 
 	if err = biz.repo.Update(ctx, user.Id.Hex(), map[string]interface{}{

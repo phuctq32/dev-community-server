@@ -18,6 +18,10 @@ func (biz *authBusiness) ForgotPassword(ctx context.Context, email string) error
 		return err
 	}
 
+	if user == nil {
+		return common.NewNotFoundError("User", common.ErrNotFound)
+	}
+
 	b := make([]byte, 32)
 	if _, err := rand.Read(b); err != nil {
 		return err

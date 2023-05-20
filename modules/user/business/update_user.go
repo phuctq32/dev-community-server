@@ -17,7 +17,7 @@ func (biz *userBusiness) UpdateUser(ctx context.Context, id string, updatingUser
 		data["birthday"] = time.Time(val.(common.Date))
 	}
 
-	if err = biz.repo.Update(ctx, id, data); err != nil {
+	if err = biz.userRepo.Update(ctx, id, data); err != nil {
 		return err
 	}
 

@@ -14,6 +14,10 @@ func (biz *authBusiness) Login(ctx context.Context, data *entity.UserLogin) (*st
 		return nil, nil, err
 	}
 
+	if user == nil {
+		return nil, nil, common.NewNotFoundError("User", common.ErrNotFound)
+	}
+
 	if ok := biz.hash.ComparePassword(user.Password, data.Password); !ok {
 		return nil, nil, entity.ErrorLoginInvalid
 	}
