@@ -42,6 +42,7 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 			"_id":        1,
 			"first_name": 1,
 			"last_name":  1,
+			"avatar":     1,
 		}},
 	}
 	aggPopulate := bson.M{"$lookup": bson.M{
