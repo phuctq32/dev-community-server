@@ -7,6 +7,7 @@ import (
 	"dev_community_server/middlewares"
 	"dev_community_server/routes"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +18,14 @@ func Bootstrap() {
 
 	// Gin setup
 	router := gin.Default()
+
+	// Using cors
+	router.Use(cors.Default())
+
+	// Using custom recover middleware
 	router.Use(middlewares.Recover(appCtx))
+
+	// Routes setup
 	routes.SetupRoutes(appCtx, router)
 
 	// Start
