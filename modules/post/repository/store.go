@@ -1,6 +1,8 @@
 package repository
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type postRepository struct {
 	postColl *mongo.Collection

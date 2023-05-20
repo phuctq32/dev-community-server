@@ -6,6 +6,7 @@ import (
 	"dev_community_server/modules/post/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"log"
 	"math"
 )
 
@@ -20,11 +21,21 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 	}
 
 	var pipeline []bson.M
-	// Paginantion
-	if filter.Page != nil && filter.Limit != nil {
-		skipStage := bson.M{"$skip": int64(math.Abs(float64(*filter.Page-1))) * int64(*filter.Limit)}
-		limitStage := bson.M{"$limit": int64(*filter.Limit)}
-		pipeline = append(pipeline, skipStage, limitStage)
+
+	if filter.Search != nil {
+		//searchTerm := common.RemoveVietnameseAccent(*filter.Search)
+		searchTerm := common.RemoveVietnameseAccent(*filter.Search)
+		log.Println(searchTerm)
+		matchTextStage := bson.M{"$match": bson.M{
+			"$text": bson.M{
+				"$search": common.RemoveVietnameseAccent(*filter.Search),
+			},
+			//"$or": []bson.M{
+			//	{"title": bson.M{"$regex": searchTerm, "$options": "i"}},
+			//	{"content": bson.M{"$regex": searchTerm, "$options": "i"}},
+			//},
+		}}
+		pipeline = append(pipeline, matchTextStage)
 	}
 
 	// Other condition
@@ -33,9 +44,20 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 		for i, condition := range filter.Other {
 			andStage = append(andStage, bson.M{i: condition})
 		}
-		matchStage := bson.M{"$match": bson.M{"$and": andStage}}
+		matchStage := bson.M{"$match": andStage}
 		pipeline = append(pipeline, matchStage)
 	}
+
+	// Paginantion
+	if filter.Page != nil && filter.Limit != nil {
+		skipStage := bson.M{"$skip": int64(math.Abs(float64(*filter.Page-1))) * int64(*filter.Limit)}
+		limitStage := bson.M{"$limit": int64(*filter.Limit)}
+		pipeline = append(pipeline, skipStage, limitStage)
+	}
+
+	// Add sort stage
+	sortStage := bson.M{"$sort": bson.M{"created_at": -1}}
+	pipeline = append(pipeline, sortStage)
 
 	// Populate author
 	userPipeline := []bson.M{
