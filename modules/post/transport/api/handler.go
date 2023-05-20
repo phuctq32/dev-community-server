@@ -1,12 +1,16 @@
 package api
 
 import (
+	"context"
 	"dev_community_server/components/appctx"
 	"dev_community_server/modules/post/business"
+	"dev_community_server/modules/post/entity"
 	"dev_community_server/modules/post/repository"
+	repository2 "dev_community_server/modules/user/repository"
 )
 
 type PostBusiness interface {
+	CreatePost(ctx context.Context, data *entity.PostCreate) error
 }
 
 type postHandler struct {
@@ -16,7 +20,8 @@ type postHandler struct {
 
 func NewPostHandler(appCtx appctx.AppContext) *postHandler {
 	postRepo := repository.NewPostRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
-	biz := business.NewPostBusiness(postRepo)
+	userRepo := repository2.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	biz := business.NewPostBusiness(postRepo, userRepo)
 
 	return &postHandler{appCtx: appCtx, business: biz}
 }

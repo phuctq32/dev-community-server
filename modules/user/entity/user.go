@@ -39,3 +39,7 @@ func NewUser(user *UserCreate) *User {
 }
 
 func (User) CollectionName() string { return "users" }
+
+func (u *User) GetUserId() string {
+	return u.Id.Hex()
+}

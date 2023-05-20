@@ -2,6 +2,7 @@ package business
 
 import (
 	"context"
+	"dev_community_server/common"
 	"dev_community_server/components/jwt"
 	"dev_community_server/modules/auth/entity"
 )
@@ -14,6 +15,10 @@ func (biz *authBusiness) Login(ctx context.Context, data *entity.UserLogin) (*st
 
 	if ok := biz.hash.ComparePassword(user.Password, data.Password); !ok {
 		return nil, entity.ErrorLoginInvalid
+	}
+
+	if !user.IsVerified {
+		return nil, common.NewCustomBadRequestError("User not verified")
 	}
 
 	tokenPayload := jwt.Payload{UserId: user.Id.Hex()}
