@@ -45,7 +45,7 @@ func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCrea
 		*biz.appCtx.GetAppConfig().GetSendGridConfig().GetVerifyTemplateId(),
 		map[string]interface{}{
 			"username": data.FirstName + " " + data.LastName,
-			"url":      fmt.Sprintf("http://localhost:8080/auth/verification/%v", verifyCode),
+			"url":      fmt.Sprintf("http://localhost:3000/verification/%v", verifyCode),
 		},
 	)
 	if err = biz.emailProvider.SendEmail(mailConfig); err != nil {

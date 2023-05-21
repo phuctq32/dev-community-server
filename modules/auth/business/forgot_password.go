@@ -37,7 +37,7 @@ func (biz *authBusiness) ForgotPassword(ctx context.Context, email string) error
 		"Reset password",
 		*biz.appCtx.GetAppConfig().GetSendGridConfig().GetResetPasswordTemplateId(),
 		map[string]interface{}{
-			"url": fmt.Sprintf("http://localhost:8080/api/v1/auth/reset_password/%v", resetCode),
+			"url": fmt.Sprintf("http://localhost:3000/reset-password/%v", resetCode),
 		},
 	)
 	err = biz.emailProvider.SendEmail(mailConfig)
