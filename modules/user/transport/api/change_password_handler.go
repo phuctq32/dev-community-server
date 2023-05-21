@@ -18,7 +18,9 @@ func (hdl *userHandler) ChangePasswordHandler() gin.HandlerFunc {
 			panic(common.NewValidationError(err))
 		}
 
-		if err := hdl.business.ChangePassword(c.Request.Context(), c.Param("id"), &user); err != nil {
+		requester := c.MustGet(common.ReqUser).(common.Requester)
+
+		if err := hdl.business.ChangePassword(c.Request.Context(), requester.GetUserId(), &user); err != nil {
 			panic(err)
 		}
 

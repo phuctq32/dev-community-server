@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"strings"
 )
 
 func (hdl *userHandler) UpdateUser() gin.HandlerFunc {
@@ -22,7 +21,9 @@ func (hdl *userHandler) UpdateUser() gin.HandlerFunc {
 			panic(common.NewValidationError(err))
 		}
 
-		if err := hdl.business.UpdateUser(c.Request.Context(), strings.Trim(c.Param("id"), " "), &user); err != nil {
+		requester := c.MustGet(common.ReqUser).(common.Requester)
+
+		if err := hdl.business.UpdateUser(c.Request.Context(), requester.GetUserId(), &user); err != nil {
 			panic(err)
 		}
 
