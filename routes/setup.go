@@ -12,4 +12,5 @@ func SetupRoutes(appCtx appctx.AppContext, router *gin.Engine) {
 	routesv1.NewUserRoutes(appCtx, v1)
 	routesv1.NewUploadRoutes(appCtx, v1)
 	routesv1.NewPostRoutes(appCtx, v1)
+	routesv1.NewCommentRoutes(appCtx, v1)
 }
