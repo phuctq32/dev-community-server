@@ -7,9 +7,13 @@ import (
 )
 
 func (biz *userBusiness) ChangePassword(ctx context.Context, id string, userChangePw *entity.UserChangePassword) error {
-	user, err := biz.repo.FindOne(ctx, map[string]interface{}{"id": id})
+	user, err := biz.userRepo.FindOne(ctx, map[string]interface{}{"id": id})
 	if err != nil {
 		return err
+	}
+
+	if user == nil {
+		return common.NewNotFoundError("User", common.ErrNotFound)
 	}
 
 	if !biz.hash.ComparePassword(user.Password, *userChangePw.OldPassword) {
@@ -25,7 +29,7 @@ func (biz *userBusiness) ChangePassword(ctx context.Context, id string, userChan
 		return err
 	}
 
-	if err = biz.repo.Update(ctx, id, map[string]interface{}{"password": hashedPassword}); err != nil {
+	if err = biz.userRepo.Update(ctx, id, map[string]interface{}{"password": hashedPassword}); err != nil {
 		return err
 	}
 

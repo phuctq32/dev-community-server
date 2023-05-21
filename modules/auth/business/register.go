@@ -13,11 +13,7 @@ import (
 func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCreate) error {
 	existingUser, err := biz.repo.FindOne(ctx, map[string]interface{}{"email": data.Email})
 	if err != nil {
-		if appErr, ok := err.(*common.AppError); ok {
-			if appErr.Key != "NOT_FOUND" {
-				return err
-			}
-		}
+		return err
 	}
 
 	if existingUser != nil {

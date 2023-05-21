@@ -12,11 +12,14 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 
 	postRouter := group.Group("/posts")
 	{
-		postRouter.GET("/:userId", postHandler.GetPostByUserId())
+		postRouter.GET("", postHandler.GetPosts())
+		postRouter.GET("/:id", postHandler.GetPostById())
+		postRouter.GET("/search", postHandler.SearchPost())
 	}
 
 	postProtectedRouter := postRouter.Use(middlewares.Authorize(appCtx))
 	{
 		postProtectedRouter.POST("", postHandler.CreatePost())
+		postProtectedRouter.PATCH("/:id", postHandler.UpdatePost())
 	}
 }

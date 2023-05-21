@@ -4,9 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/pkg/errors"
+	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"net/http"
 )
+
+var ErrNotFound = mongo.ErrNoDocuments
 
 type AppError struct {
 	StatusCode      int                `json:"status_code"`

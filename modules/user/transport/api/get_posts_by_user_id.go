@@ -5,9 +5,9 @@ import (
 	"net/http"
 )
 
-func (hdl *postHandler) GetPostByUserId() gin.HandlerFunc {
+func (hdl *userHandler) GetPostsByUserId() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		res, err := hdl.business.GetPostByUserId(c.Request.Context(), c.Param("userId"))
+		res, err := hdl.business.GetPostsByUserId(c.Request.Context(), c.Param("userId"))
 		if err != nil {
 			panic(err)
 		}

@@ -6,6 +6,7 @@ import (
 	"dev_community_server/modules/post/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"log"
 	"math"
 )
 
@@ -20,6 +21,37 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 	}
 
 	var pipeline []bson.M
+
+	// Sort
+	sortStage := bson.M{"$sort": bson.M{"created_at": -1}}
+
+	if filter.Search != nil {
+		//searchTerm := common.RemoveVietnameseAccent(*filter.Search)
+		searchTerm := common.RemoveVietnameseAccent(*filter.Search)
+		log.Println(searchTerm)
+		matchTextStage := bson.M{"$match": bson.M{
+			"$text": bson.M{
+				"$search": common.RemoveVietnameseAccent(*filter.Search),
+			},
+			//"$or": []bson.M{
+			//	{"title": bson.M{"$regex": searchTerm, "$options": "i"}},
+			//	{"content": bson.M{"$regex": searchTerm, "$options": "i"}},
+			//},
+		}}
+		sortStage = bson.M{"$sort": bson.M{"$score": bson.M{"$meta": "textScore"}}}
+		pipeline = append(pipeline, matchTextStage)
+	}
+
+	// Other condition
+	//if len(filter.Other) > 0 {
+	//	var andStage []bson.M
+	//	for i, condition := range filter.Other {
+	//		andStage = append(andStage, bson.M{i: condition})
+	//	}
+	//	matchStage := bson.M{"$match": bson.M{"$and": andStage}}
+	//	pipeline = append(pipeline, matchStage)
+	//}
+
 	// Paginantion
 	if filter.Page != nil && filter.Limit != nil {
 		skipStage := bson.M{"$skip": int64(math.Abs(float64(*filter.Page-1))) * int64(*filter.Limit)}
@@ -27,15 +59,9 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 		pipeline = append(pipeline, skipStage, limitStage)
 	}
 
-	// Other condition
-	if len(filter.Other) > 0 {
-		var andStage []bson.M
-		for i, condition := range filter.Other {
-			andStage = append(andStage, bson.M{i: condition})
-		}
-		matchStage := bson.M{"$match": bson.M{"$and": andStage}}
-		pipeline = append(pipeline, matchStage)
-	}
+	// Add sort stage
+
+	pipeline = append(pipeline, sortStage)
 
 	// Populate author
 	userPipeline := []bson.M{
@@ -62,6 +88,7 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 	}}
 	pipeline = append(pipeline, projectStage)
 
+	log.Println("pipeline: ", pipeline)
 	cursor, err := repo.postColl.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, common.NewServerError(err)
@@ -73,4 +100,67 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 	}
 
 	return posts, nil
+}
+
+func (repo *postRepository) FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Post, error) {
+	if id, ok := filter["id"]; ok {
+		objId, err := primitive.ObjectIDFromHex(id.(string))
+		if err != nil {
+			return nil, err
+		}
+
+		filter["_id"] = objId
+		delete(filter, "id")
+	}
+
+	var pipeline []bson.M
+
+	if len(filter) > 0 {
+		var andStage []bson.M
+		for i, condition := range filter {
+			andStage = append(andStage, bson.M{i: condition})
+		}
+		matchStage := bson.M{"$match": bson.M{"$and": andStage}}
+		pipeline = append(pipeline, matchStage)
+	}
+
+	userPipeline := []bson.M{
+		{"$project": bson.M{
+			"_id":        1,
+			"first_name": 1,
+			"last_name":  1,
+			"avatar":     1,
+		}},
+	}
+	populateStage := bson.M{"$lookup": bson.M{
+		"from":         "users",
+		"localField":   "author_id",
+		"foreignField": "_id",
+		"pipeline":     userPipeline,
+		"as":           "author",
+	}}
+	unwindStage := bson.M{"$unwind": "$author"}
+	pipeline = append(pipeline, populateStage, unwindStage)
+
+	// Project
+	projectStage := bson.M{"$project": bson.M{
+		"author_id": 0,
+	}}
+
+	pipeline = append(pipeline, projectStage)
+
+	cursor, err := repo.postColl.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	var posts []*entity.Post
+	if err = cursor.All(ctx, &posts); err != nil {
+		return nil, err
+	}
+	if len(posts) == 0 {
+		return nil, nil
+	}
+
+	return posts[0], nil
 }
