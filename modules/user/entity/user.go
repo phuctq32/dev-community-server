@@ -2,6 +2,7 @@ package entity
 
 import (
 	"dev_community_server/common"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
@@ -12,14 +13,16 @@ type Token struct {
 
 type User struct {
 	common.ModelCommon `bson:",inline" json:",inline"`
-	FirstName          string     `bson:"first_name,omitempty" json:"first_name,omitempty"`
-	LastName           string     `bson:"last_name,omitempty" json:"last_name,omitempty"`
-	Email              string     `bson:"email,omitempty" json:"email,omitempty"`
-	Password           string     `bson:"password,omitempty" json:"-"`
-	Birthday           *time.Time `bson:"birthday,omitempty" json:"birthday,omitempty"`
-	Avatar             string     `bson:"avatar" json:"avatar"`
-	VerifiedToken      *Token     `bson:"verified_token,omitempty" json:"-"`
-	IsVerified         bool       `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
+	FirstName          string             `bson:"first_name,omitempty" json:"first_name,omitempty"`
+	LastName           string             `bson:"last_name,omitempty" json:"last_name,omitempty"`
+	Email              string             `bson:"email,omitempty" json:"email,omitempty"`
+	Password           string             `bson:"password,omitempty" json:"-"`
+	Birthday           *time.Time         `bson:"birthday,omitempty" json:"birthday,omitempty"`
+	RoleId             primitive.ObjectID `bson:"role_id" json:"-"`
+	Role               string             `json:"role,omitempty"`
+	Avatar             string             `bson:"avatar" json:"avatar"`
+	VerifiedToken      *Token             `bson:"verified_token,omitempty" json:"-"`
+	IsVerified         bool               `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
 }
 
 func NewUser(user *UserCreate) *User {

@@ -88,7 +88,6 @@ func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*
 	}}
 	pipeline = append(pipeline, projectStage)
 
-	log.Println("pipeline: ", pipeline)
 	cursor, err := repo.postColl.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, common.NewServerError(err)
