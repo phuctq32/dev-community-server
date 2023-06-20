@@ -20,9 +20,10 @@ type User struct {
 	Birthday           *time.Time         `bson:"birthday,omitempty" json:"birthday,omitempty"`
 	RoleId             primitive.ObjectID `bson:"role_id" json:"-"`
 	Role               string             `json:"role,omitempty"`
-	Avatar             string             `bson:"avatar" json:"avatar"`
-	VerifiedToken      *Token             `bson:"verified_token,omitempty" json:"-"`
-	IsVerified         bool               `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
+	RoleType           common.RoleType
+	Avatar             string `bson:"avatar" json:"avatar"`
+	VerifiedToken      *Token `bson:"verified_token,omitempty" json:"-"`
+	IsVerified         bool   `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
 }
 
 func NewUser(user *UserCreate) *User {
@@ -51,4 +52,8 @@ func (User) CollectionName() string { return "users" }
 
 func (u *User) GetUserId() string {
 	return u.Id.Hex()
+}
+
+func (u *User) GetRoleType() common.RoleType {
+	return u.RoleType
 }

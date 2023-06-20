@@ -4,6 +4,7 @@ import (
 	"dev_community_server/common"
 	"dev_community_server/components/appctx"
 	"dev_community_server/components/jwt"
+	repository2 "dev_community_server/modules/role/repository"
 	"dev_community_server/modules/user/repository"
 	"errors"
 	"github.com/gin-gonic/gin"
@@ -21,6 +22,7 @@ func Authorize(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		userRepo := repository.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+		roleRepo := repository2.NewRoleRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
 
 		payload, err := tokenProvider.Decode(parts[1])
 		if err != nil {
@@ -31,6 +33,11 @@ func Authorize(appCtx appctx.AppContext) gin.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
+		role, err := roleRepo.FindOne(c.Request.Context(), map[string]interface{}{"id": user.RoleId.Hex()})
+		if err != nil {
+			panic(err)
+		}
+		user.RoleType = role.Type
 
 		if !user.IsVerified {
 			panic(common.NewCustomBadRequestError("user not verified"))
