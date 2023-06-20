@@ -9,7 +9,7 @@ import (
 func (repo *commentRepository) Create(ctx context.Context, data *entity.CommentCreate) (*entity.Comment, error) {
 	comment := entity.NewComment(data)
 
-	result, err := repo.commentColl.InsertOne(ctx, comment);
+	result, err := repo.commentColl.InsertOne(ctx, comment)
 	if err != nil {
 		return nil, err
 	}

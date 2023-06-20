@@ -3,7 +3,6 @@ package entity
 import (
 	"dev_community_server/common"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"log"
 	"time"
 )
 
@@ -18,7 +17,6 @@ type Comment struct {
 }
 
 func NewComment(data *CommentCreate) *Comment {
-	log.Println("da toi 1")
 	postObjId, err := primitive.ObjectIDFromHex(*data.PostId)
 	authorObjId, err := primitive.ObjectIDFromHex(*data.AuthorId)
 	var parentCmtObjId *primitive.ObjectID
@@ -31,7 +29,6 @@ func NewComment(data *CommentCreate) *Comment {
 	if err != nil {
 		panic(err)
 	}
-	log.Println("da toi 2")
 
 	now := time.Now()
 	return &Comment{

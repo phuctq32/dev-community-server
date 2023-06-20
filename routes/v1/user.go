@@ -15,7 +15,6 @@ func NewUserRoutes(appCtx appctx.AppContext, v *gin.RouterGroup) {
 		userRouter.GET("/:id", userHandler.GetUserById())
 		userRouter.GET("/posts/:userId", userHandler.GetPostsByUserId())
 	}
-
 	userProtectedRouter := userRouter.Use(middlewares.Authorize(appCtx))
 	{
 		userProtectedRouter.GET("/profile", userHandler.GetProfile())
