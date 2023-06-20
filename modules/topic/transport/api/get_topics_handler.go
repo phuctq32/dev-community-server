@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func (hdl *postHandler) SearchPost() gin.HandlerFunc {
+func (hdl *topicHandler) GetTopics() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var filter common.Filter
 		limit, gotLimit := c.GetQuery("limit")
@@ -34,24 +34,21 @@ func (hdl *postHandler) SearchPost() gin.HandlerFunc {
 			filter.Limit = &intLimit
 		} else {
 			var (
-				page  int = 1
-				limit int = 10
+				intPage  int = 1
+				intLimit int = 10
 			)
-			filter.Page = &page
-			filter.Limit = &limit
+			filter.Page = &intPage
+			filter.Limit = &intLimit
 		}
 
-		if search, ok := c.GetQuery("q"); ok {
-			filter.Search = &search
-		}
-
-		posts, err := hdl.business.GetPosts(c.Request.Context(), filter)
+		topics, err := hdl.biz.GetTopics(c.Request.Context(), filter)
 		if err != nil {
 			panic(err)
 		}
-
 		c.JSON(http.StatusOK, gin.H{
-			"posts": posts,
+			"topics": topics,
+			"page":   filter.Page,
+			"count":  len(topics),
 		})
 	}
 }

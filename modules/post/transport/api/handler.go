@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"dev_community_server/common"
 	"dev_community_server/components/appctx"
 	"dev_community_server/modules/post/business"
 	"dev_community_server/modules/post/entity"
@@ -11,7 +12,7 @@ import (
 
 type PostBusiness interface {
 	CreatePost(ctx context.Context, data *entity.PostCreate) error
-	GetPosts(ctx context.Context, filter entity.Filter) ([]*entity.Post, error)
+	GetPosts(ctx context.Context, filter common.Filter) ([]*entity.Post, error)
 	UpdatePost(ctx context.Context, data *entity.PostUpdate) error
 	GetPostById(ctx context.Context, id *string) (*entity.Post, error)
 }

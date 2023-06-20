@@ -2,6 +2,7 @@ package business
 
 import (
 	"context"
+	"dev_community_server/common"
 	"dev_community_server/components/hasher"
 	postEntity "dev_community_server/modules/post/entity"
 	"dev_community_server/modules/user/entity"
@@ -14,7 +15,7 @@ type UserRepository interface {
 }
 
 type PostRepository interface {
-	Find(ctx context.Context, filter postEntity.Filter) ([]*postEntity.Post, error)
+	Find(ctx context.Context, filter common.Filter) ([]*postEntity.Post, error)
 }
 
 type userBusiness struct {

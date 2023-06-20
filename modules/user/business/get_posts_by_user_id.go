@@ -16,7 +16,7 @@ func (biz *userBusiness) GetPostsByUserId(ctx context.Context, userId string) ([
 		return nil, common.NewNotFoundError("User", common.ErrNotFound)
 	}
 
-	filter := entity.Filter{
+	filter := common.Filter{
 		Limit: nil,
 		Page:  nil,
 		Other: map[string]interface{}{"author_id": userId},

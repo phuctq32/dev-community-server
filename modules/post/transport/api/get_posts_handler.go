@@ -1,7 +1,7 @@
 package api
 
 import (
-	"dev_community_server/modules/post/entity"
+	"dev_community_server/common"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -9,7 +9,7 @@ import (
 
 func (hdl *postHandler) GetPosts() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var filter entity.Filter
+		var filter common.Filter
 		limit, gotLimit := c.GetQuery("limit")
 		page, gotPage := c.GetQuery("page")
 		if gotLimit && gotPage {

@@ -9,7 +9,7 @@ import (
 func (repo *userRepository) Create(ctx context.Context, data *userEntity.UserCreate) error {
 	user := userEntity.NewUser(data)
 
-	role, err := repo.roleRepo.FindOne(ctx, map[string]interface{}{"name": "Member"})
+	role, err := repo.roleRepo.FindOne(ctx, map[string]interface{}{"type": common.MEMBER})
 	if err != nil {
 		return err
 	}

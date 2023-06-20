@@ -10,7 +10,7 @@ import (
 	"math"
 )
 
-func (repo *postRepository) Find(ctx context.Context, filter entity.Filter) ([]*entity.Post, error) {
+func (repo *postRepository) Find(ctx context.Context, filter common.Filter) ([]*entity.Post, error) {
 	if id, ok := filter.Other["author_id"]; ok {
 		objId, err := primitive.ObjectIDFromHex(id.(string))
 		if err != nil {

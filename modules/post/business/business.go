@@ -2,13 +2,14 @@ package business
 
 import (
 	"context"
+	"dev_community_server/common"
 	"dev_community_server/modules/post/entity"
 	userEntity "dev_community_server/modules/user/entity"
 )
 
 type PostRepository interface {
 	Create(ctx context.Context, data *entity.PostCreate) error
-	Find(ctx context.Context, filter entity.Filter) ([]*entity.Post, error)
+	Find(ctx context.Context, filter common.Filter) ([]*entity.Post, error)
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Post, error)
 	Update(ctx context.Context, id string, data map[string]interface{}) error
 }
