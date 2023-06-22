@@ -2,6 +2,7 @@ package common
 
 import (
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"reflect"
 )
 
@@ -40,7 +41,15 @@ func StructToMap(in interface{}) (map[string]interface{}, error) {
 				}
 				out[tagValue] = convertedVal
 			} else {
-				out[tagValue] = value.Interface()
+				finalValue := value.Interface()
+				if objIdTagValue, ok := field.Tag.Lookup("toObjectId"); ok && objIdTagValue == "true" {
+					objId, err := primitive.ObjectIDFromHex(value.Interface().(string))
+					if err != nil {
+						return nil, err
+					}
+					finalValue = objId
+				}
+				out[tagValue] = finalValue
 			}
 		}
 	}

@@ -15,4 +15,5 @@ func SetupRoutes(appCtx appctx.AppContext, router *gin.Engine) {
 	routesv1.NewCommentRoutes(appCtx, v1)
 	routesv1.NewRoleRoutes(appCtx, v1)
 	routesv1.NewTopicRoutes(appCtx, v1)
+	routesv1.NewTagRoutes(appCtx, v1)
 }

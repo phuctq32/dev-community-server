@@ -53,8 +53,6 @@ func formatValidationError(err validator.FieldError) *ValidationError {
 		res.Message = "Must be not empty"
 	case "email":
 		res.Message = "Email is invalid"
-	//case "lte":
-	//res.Message = fmt.Sprintf("Must be less than or equal %v", err.Param())
 	case "gte":
 		res.Message = fmt.Sprintf("Must be greater than or equal %v", err.Param())
 	case "eqfield":
@@ -69,6 +67,8 @@ func formatValidationError(err validator.FieldError) *ValidationError {
 		} else {
 			res.Message = fmt.Sprintf("Min length of array is %v", err.Param())
 		}
+	case "mongodb":
+		res.Message = "Invalid id"
 	}
 
 	return res

@@ -17,14 +17,14 @@ type AppError struct {
 	Message         string             `json:"message"`
 	RootErr         error              `json:"-"`
 	Log             string             `json:"-"`
-	ValidationError []*ValidationError `json:"validation_error,omitempty"`
+	ValidationError []*ValidationError `json:"validation_errors,omitempty"`
 }
 
 type AppErrorLog struct {
 	Key             string             `json:"error_key"`
 	RootErr         error              `json:"root_error"`
 	Log             string             `json:"log"`
-	ValidationError []*ValidationError `json:"validation_error,omitempty"`
+	ValidationError []*ValidationError `json:"validation_errors,omitempty"`
 }
 
 func (err *AppError) Error() string {
