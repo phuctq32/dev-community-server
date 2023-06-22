@@ -11,7 +11,7 @@ import (
 )
 
 func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCreate) error {
-	existingUser, err := biz.repo.FindOne(ctx, map[string]interface{}{"email": data.Email})
+	existingUser, err := biz.userRepo.FindOne(ctx, map[string]interface{}{"email": data.Email})
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,14 @@ func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCrea
 		return common.NewServerError(err)
 	}
 	data.VerifiedToken = verifyCode
-	if err = biz.repo.Create(ctx, data); err != nil {
+
+	role, err := biz.roleRepo.FindOne(ctx, map[string]interface{}{"type": common.MEMBER})
+	if err != nil {
+		return err
+	}
+	data.RoleId = role.Id
+
+	if err = biz.userRepo.Create(ctx, data); err != nil {
 		return err
 	}
 

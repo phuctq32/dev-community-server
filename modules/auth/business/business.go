@@ -6,18 +6,24 @@ import (
 	"dev_community_server/components/hasher"
 	"dev_community_server/components/jwt"
 	"dev_community_server/components/mailer"
+	"dev_community_server/modules/role/entity"
 	userEntity "dev_community_server/modules/user/entity"
 )
 
-type AuthRepository interface {
+type UserRepository interface {
 	FindOne(ctx context.Context, filter map[string]interface{}) (*userEntity.User, error)
 	Create(ctx context.Context, data *userEntity.UserCreate) error
 	Update(ctx context.Context, id string, data map[string]interface{}) error
 }
 
+type RoleRepository interface {
+	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Role, error)
+}
+
 type authBusiness struct {
 	appCtx        appctx.AppContext
-	repo          AuthRepository
+	userRepo      UserRepository
+	roleRepo      RoleRepository
 	hash          hasher.MyHash
 	jwtProvider   jwt.TokenProvider
 	jwtExpiry     int
@@ -26,7 +32,8 @@ type authBusiness struct {
 
 func NewAuthBusiness(
 	appCtx appctx.AppContext,
-	repo AuthRepository,
+	repo UserRepository,
+	roleRepo RoleRepository,
 	hash hasher.MyHash,
 	tokenProvider jwt.TokenProvider,
 	tokenExpiry int,
@@ -34,7 +41,8 @@ func NewAuthBusiness(
 ) *authBusiness {
 	return &authBusiness{
 		appCtx:        appCtx,
-		repo:          repo,
+		userRepo:      repo,
+		roleRepo:      roleRepo,
 		hash:          hash,
 		jwtProvider:   tokenProvider,
 		jwtExpiry:     tokenExpiry,

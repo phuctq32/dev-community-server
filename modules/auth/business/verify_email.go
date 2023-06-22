@@ -7,7 +7,7 @@ import (
 )
 
 func (biz *authBusiness) VerifyEmail(ctx context.Context, verifyToken string) error {
-	user, err := biz.repo.FindOne(ctx, map[string]interface{}{"verified_token.token": verifyToken})
+	user, err := biz.userRepo.FindOne(ctx, map[string]interface{}{"verified_token.token": verifyToken})
 	if err != nil {
 		return err
 	}
@@ -20,7 +20,7 @@ func (biz *authBusiness) VerifyEmail(ctx context.Context, verifyToken string) er
 		return common.NewCustomBadRequestError("Verification token expired")
 	}
 
-	if err = biz.repo.Update(ctx, user.Id.Hex(), map[string]interface{}{
+	if err = biz.userRepo.Update(ctx, user.Id.Hex(), map[string]interface{}{
 		"is_verified":    true,
 		"verified_token": nil,
 	}); err != nil {

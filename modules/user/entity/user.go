@@ -21,10 +21,10 @@ type User struct {
 	Birthday               *time.Time         `bson:"birthday,omitempty" json:"birthday,omitempty"`
 	RoleId                 primitive.ObjectID `bson:"role_id" json:"-"`
 	Role                   string             `json:"role,omitempty"`
-	RoleType               common.RoleType
-	Avatar                 string `bson:"avatar" json:"avatar"`
-	VerifiedToken          *Token `bson:"verified_token,omitempty" json:"-"`
-	IsVerified             bool   `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
+	RoleType               common.RoleType    `json:"-"`
+	Avatar                 string             `bson:"avatar" json:"avatar"`
+	VerifiedToken          *Token             `bson:"verified_token,omitempty" json:"-"`
+	IsVerified             bool               `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
 }
 
 func NewUser(user *UserCreate) *User {
@@ -41,6 +41,7 @@ func NewUser(user *UserCreate) *User {
 		Password:  user.Password,
 		Birthday:  &birthday,
 		Avatar:    common.DEFAULT_AVATAR_URL,
+		RoleId:    user.RoleId,
 		VerifiedToken: &Token{
 			Token:     user.VerifiedToken,
 			ExpiredAt: time.Now().Add(time.Duration(time.Hour * 24 * 7)),

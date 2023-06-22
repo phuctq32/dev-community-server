@@ -13,7 +13,7 @@ import (
 )
 
 func (biz *authBusiness) ForgotPassword(ctx context.Context, email string) error {
-	user, err := biz.repo.FindOne(ctx, map[string]interface{}{"email": email})
+	user, err := biz.userRepo.FindOne(ctx, map[string]interface{}{"email": email})
 	if err != nil {
 		return err
 	}
@@ -28,7 +28,7 @@ func (biz *authBusiness) ForgotPassword(ctx context.Context, email string) error
 	}
 	resetCode := hex.EncodeToString(b)
 
-	err = biz.repo.Update(ctx, user.Id.Hex(), map[string]interface{}{
+	err = biz.userRepo.Update(ctx, user.Id.Hex(), map[string]interface{}{
 		"reset_token": &entity.Token{
 			Token:     resetCode,
 			ExpiredAt: time.Now().Add(time.Duration(time.Hour)),

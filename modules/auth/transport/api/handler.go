@@ -8,8 +8,9 @@ import (
 	"dev_community_server/components/mailer/sendgrid"
 	"dev_community_server/modules/auth/business"
 	"dev_community_server/modules/auth/entity"
+	"dev_community_server/modules/role/repository"
 	userEntity "dev_community_server/modules/user/entity"
-	userRepo "dev_community_server/modules/user/repository"
+	userRepository "dev_community_server/modules/user/repository"
 )
 
 type AuthBusiness interface {
@@ -26,11 +27,12 @@ type authHandler struct {
 }
 
 func NewAuthHandler(appCtx appctx.AppContext) *authHandler {
-	authRepo := userRepo.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	userRepo := userRepository.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	roleRepo := repository.NewRoleRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
 	hashService := hasher.NewBcryptHash(12)
 	jwtProvider := jwt.NewJwtProvider(*appCtx.GetSecretKey())
 	sgService := sendgrid.NewSendGridProvider(*appCtx.GetAppConfig().GetSendGridConfig().GetApiKey())
-	biz := business.NewAuthBusiness(appCtx, authRepo, hashService, jwtProvider, 30*24*60, sgService)
+	biz := business.NewAuthBusiness(appCtx, userRepo, roleRepo, hashService, jwtProvider, 30*24*60, sgService)
 
 	return &authHandler{appCtx: appCtx, business: biz}
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func (biz *authBusiness) Login(ctx context.Context, data *entity.UserLogin) (*string, *userEntity.User, error) {
-	user, err := biz.repo.FindOne(ctx, map[string]interface{}{"email": data.Email})
+	user, err := biz.userRepo.FindOne(ctx, map[string]interface{}{"email": data.Email})
 	if err != nil {
 		return nil, nil, err
 	}
