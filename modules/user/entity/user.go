@@ -12,25 +12,26 @@ type Token struct {
 }
 
 type User struct {
-	common.ModelCommon `bson:",inline" json:",inline"`
-	FirstName          string             `bson:"first_name,omitempty" json:"first_name,omitempty"`
-	LastName           string             `bson:"last_name,omitempty" json:"last_name,omitempty"`
-	Email              string             `bson:"email,omitempty" json:"email,omitempty"`
-	Password           string             `bson:"password,omitempty" json:"-"`
-	Birthday           *time.Time         `bson:"birthday,omitempty" json:"birthday,omitempty"`
-	RoleId             primitive.ObjectID `bson:"role_id" json:"-"`
-	Role               string             `json:"role,omitempty"`
-	RoleType           common.RoleType
-	Avatar             string `bson:"avatar" json:"avatar"`
-	VerifiedToken      *Token `bson:"verified_token,omitempty" json:"-"`
-	IsVerified         bool   `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
+	common.MongoId         `bson:",inline" json:",inline"`
+	common.MongoTimestamps `bson:",inline" json:",inline"`
+	FirstName              string             `bson:"first_name,omitempty" json:"first_name,omitempty"`
+	LastName               string             `bson:"last_name,omitempty" json:"last_name,omitempty"`
+	Email                  string             `bson:"email,omitempty" json:"email,omitempty"`
+	Password               string             `bson:"password,omitempty" json:"-"`
+	Birthday               *time.Time         `bson:"birthday,omitempty" json:"birthday,omitempty"`
+	RoleId                 primitive.ObjectID `bson:"role_id" json:"-"`
+	Role                   string             `json:"role,omitempty"`
+	RoleType               common.RoleType
+	Avatar                 string `bson:"avatar" json:"avatar"`
+	VerifiedToken          *Token `bson:"verified_token,omitempty" json:"-"`
+	IsVerified             bool   `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
 }
 
 func NewUser(user *UserCreate) *User {
 	now := time.Now()
 	birthday := time.Time(user.Birthday)
 	return &User{
-		ModelCommon: common.ModelCommon{
+		MongoTimestamps: common.MongoTimestamps{
 			CreatedAt: &now,
 			UpdatedAt: &now,
 		},

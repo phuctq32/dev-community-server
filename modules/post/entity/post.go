@@ -8,20 +8,21 @@ import (
 )
 
 type Post struct {
-	common.ModelCommon `bson:",inline" json:",inline"`
-	Title              string              `bson:"title" json:"title"`
-	Content            string              `bson:"content" json:"content"`
-	Score              int                 `bson:"score" json:"score"`
-	Images             []string            `bson:"images,omitempty" json:"images,omitempty"`
-	AuthorId           *primitive.ObjectID `bson:"author_id" json:"author_id,omitempty"`
-	Author             *userEntity.User    `bson:"author,omitempty" json:"author"`
+	common.MongoId         `bson:",inline" json:",inline"`
+	common.MongoTimestamps `bson:",inline" json:",inline"`
+	Title                  string              `bson:"title" json:"title"`
+	Content                string              `bson:"content" json:"content"`
+	Score                  int                 `bson:"score" json:"score"`
+	Images                 []string            `bson:"images,omitempty" json:"images,omitempty"`
+	AuthorId               *primitive.ObjectID `bson:"author_id" json:"author_id,omitempty"`
+	Author                 *userEntity.User    `bson:"author,omitempty" json:"author"`
 }
 
 func NewPost(data *PostCreate) *Post {
 	authorObjId, _ := primitive.ObjectIDFromHex(data.AuthorId)
 	now := time.Now()
 	return &Post{
-		ModelCommon: common.ModelCommon{
+		MongoTimestamps: common.MongoTimestamps{
 			CreatedAt: &now,
 			UpdatedAt: &now,
 		},
