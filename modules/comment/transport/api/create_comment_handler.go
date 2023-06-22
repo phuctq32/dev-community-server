@@ -26,9 +26,6 @@ func (hdl *commentHandler) CreateComment() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
-			"message": "Created successfully",
-			"comment": comment,
-		})
+		c.JSON(http.StatusCreated, common.NewSimpleResponse("Created successfully", comment))
 	}
 }

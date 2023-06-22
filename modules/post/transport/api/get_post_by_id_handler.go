@@ -1,6 +1,7 @@
 package api
 
 import (
+	"dev_community_server/common"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -14,8 +15,6 @@ func (hdl *postHandler) GetPostById() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"post": post,
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("", post))
 	}
 }

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"dev_community_server/common"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -12,6 +13,6 @@ func (hdl *userHandler) GetUserById() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, user)
+		c.JSON(http.StatusOK, common.NewSimpleResponse("", user))
 	}
 }

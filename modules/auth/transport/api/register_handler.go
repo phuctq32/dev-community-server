@@ -25,8 +25,6 @@ func (hdl *authHandler) RegisterHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
-			"message": "Register successfully! We sent a code to verify your email, please check!",
-		})
+		c.JSON(http.StatusCreated, common.NewSimpleResponse("Register successfully! We sent a code to verify your email, please check!", nil))
 	}
 }

@@ -33,8 +33,6 @@ func (hdl *postHandler) UpdatePost() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Updated post successfully",
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("Updated post successfully", nil))
 	}
 }

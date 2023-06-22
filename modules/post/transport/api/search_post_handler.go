@@ -50,8 +50,6 @@ func (hdl *postHandler) SearchPost() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"posts": posts,
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("", posts))
 	}
 }

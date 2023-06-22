@@ -24,8 +24,6 @@ func (hdl *userHandler) ChangePasswordHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Change passsword successfully",
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("Change password successfully", nil))
 	}
 }

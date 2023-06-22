@@ -15,8 +15,6 @@ func (hdl *userHandler) GetProfile() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"user": user,
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("", user))
 	}
 }

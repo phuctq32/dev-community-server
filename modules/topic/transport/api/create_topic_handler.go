@@ -1,6 +1,7 @@
 package api
 
 import (
+	"dev_community_server/common"
 	"dev_community_server/modules/topic/entity"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -26,9 +27,6 @@ func (hdl *topicHandler) CreateTopic() gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
-			"message": "Create topic successfully",
-			"topic":   topic,
-		})
+		c.JSON(http.StatusCreated, common.NewSimpleResponse("Create topic successfully", topic))
 	}
 }

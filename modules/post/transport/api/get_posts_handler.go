@@ -42,8 +42,6 @@ func (hdl *postHandler) GetPosts() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"posts": posts,
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("", posts))
 	}
 }

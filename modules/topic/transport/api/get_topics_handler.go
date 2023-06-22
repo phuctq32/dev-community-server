@@ -45,10 +45,6 @@ func (hdl *topicHandler) GetTopics() gin.HandlerFunc {
 		if err != nil {
 			panic(err)
 		}
-		c.JSON(http.StatusOK, gin.H{
-			"topics": topics,
-			"page":   filter.Page,
-			"count":  len(topics),
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("", topics))
 	}
 }

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"dev_community_server/common"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -19,8 +20,6 @@ func (hdl *authHandler) ForgotPasswordHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Please check your email to reset password",
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("Please check your email to reset password", nil))
 	}
 }

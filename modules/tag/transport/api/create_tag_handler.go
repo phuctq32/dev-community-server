@@ -25,9 +25,6 @@ func (hdl *tagHandler) CreateTag() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
-			"message": "Create tag successfully",
-			"tag":     tag,
-		})
+		c.JSON(http.StatusCreated, common.NewSimpleResponse("Create tag successfully", tag))
 	}
 }

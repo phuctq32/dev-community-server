@@ -1,6 +1,7 @@
 package api
 
 import (
+	"dev_community_server/common"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -13,8 +14,6 @@ func (hdl *authHandler) VerifyEmail() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Your email is verified!",
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("Your email is verified!", nil))
 	}
 }

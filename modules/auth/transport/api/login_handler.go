@@ -23,9 +23,9 @@ func (hdl *authHandler) LoginHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusOK, common.NewSimpleResponse("", map[string]interface{}{
 			"token": token,
 			"user":  user,
-		})
+		}))
 	}
 }

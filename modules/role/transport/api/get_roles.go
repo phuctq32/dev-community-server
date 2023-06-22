@@ -1,6 +1,7 @@
 package api
 
 import (
+	"dev_community_server/common"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -13,8 +14,6 @@ func (hdl *roleHandler) GetRoles() gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"roles": roles,
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("", roles))
 	}
 }

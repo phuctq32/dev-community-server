@@ -27,8 +27,6 @@ func (hdl *userHandler) UpdateUser() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Updated successfully!",
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("Updated successfully", nil))
 	}
 }

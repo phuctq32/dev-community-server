@@ -30,8 +30,6 @@ func (hdl *postHandler) CreatePost() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
-			"message": "Created post successfully",
-		})
+		c.JSON(http.StatusCreated, common.NewSimpleResponse("Created post successfully", nil))
 	}
 }

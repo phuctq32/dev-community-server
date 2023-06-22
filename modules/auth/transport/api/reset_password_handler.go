@@ -25,8 +25,6 @@ func (hdl *authHandler) RestPasswordHandler() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Reset password successfully",
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("Reset password successfully", nil))
 	}
 }

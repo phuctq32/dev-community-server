@@ -1,6 +1,7 @@
 package api
 
 import (
+	"dev_community_server/common"
 	"dev_community_server/modules/role/entity"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -26,9 +27,6 @@ func (hdl *roleHandler) CreateRole() gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(http.StatusCreated, gin.H{
-			"message": "Create role successfully",
-			"role":    role,
-		})
+		c.JSON(http.StatusCreated, common.NewSimpleResponse("Create role successfully", role))
 	}
 }
