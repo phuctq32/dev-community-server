@@ -3,7 +3,6 @@ package common
 import (
 	"fmt"
 	"github.com/go-playground/validator/v10"
-	"log"
 	"reflect"
 	"strings"
 )
@@ -16,6 +15,10 @@ type ValidationError struct {
 	Field   string      `json:"field"`
 	Message string      `json:"message"`
 	Value   interface{} `json:"value"`
+}
+
+func (e *ValidationError) Error() string {
+	return fmt.Sprintf("Validation Error: field %q: %v", e.Field, e.Message)
 }
 
 type myValidator struct {
@@ -52,7 +55,7 @@ func formatValidationError(err validator.FieldError) *ValidationError {
 	case "required":
 		res.Message = "Must be not empty"
 	case "email":
-		res.Message = "Email is invalid"
+		res.Message = "Invalid email"
 	case "gte":
 		res.Message = fmt.Sprintf("Must be greater than or equal %v", err.Param())
 	case "eqfield":
@@ -68,14 +71,13 @@ func formatValidationError(err validator.FieldError) *ValidationError {
 			res.Message = fmt.Sprintf("Min length of array is %v", err.Param())
 		}
 	case "mongodb":
-		res.Message = "Invalid id"
+		res.Message = "Invalid ObjectId"
 	}
 
 	return res
 }
 
 func validationErrorsConverter(errs error) []*ValidationError {
-	log.Println(errs.(validator.ValidationErrors))
 	var res []*ValidationError
 	for _, err := range errs.(validator.ValidationErrors) {
 		res = append(res, formatValidationError(err))

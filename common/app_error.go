@@ -118,7 +118,8 @@ func NewValidationError(err []*ValidationError) *AppError {
 	return &AppError{
 		StatusCode:      http.StatusUnprocessableEntity,
 		Key:             "VALIDATION_ERROR",
-		Message:         err[0].Message,
+		Message:         fmt.Sprintf("field %q: %v", err[0].Field, err[0].Message),
 		ValidationError: err,
+		RootErr:         err[0],
 	}
 }
