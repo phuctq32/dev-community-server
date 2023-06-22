@@ -19,6 +19,6 @@ func NewTopicRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 
 	topicProtectedRouter := topicRouter.Use(middlewares.Authorize(appCtx))
 	{
-		topicProtectedRouter.POST("", middlewares.CheckRole([]common.RoleType{common.ADMINISTRATOR}), topicHandler.CreateTopic())
+		topicProtectedRouter.POST("", middlewares.RequireRoles(common.ADMINISTRATOR), topicHandler.CreateTopic())
 	}
 }

@@ -6,15 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CheckRole(roles []common.RoleType) gin.HandlerFunc {
+func RequireRoles(roles ...common.RoleType) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		requester := c.MustGet(common.ReqUser).(common.Requester)
 		for _, role := range roles {
-			if requester.GetRoleType() != role {
-				panic(common.NewNoPermissionError(errors.New("Role access denied")))
+			if requester.GetRoleType() == role {
+				c.Next()
+				return
 			}
 		}
 
-		c.Next()
+		panic(common.NewNoPermissionError(errors.New("Role access denied")))
 	}
 }
