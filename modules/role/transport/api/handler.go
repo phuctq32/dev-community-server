@@ -14,13 +14,12 @@ type RoleBusiness interface {
 }
 
 type roleHandler struct {
-	appCtx appctx.AppContext
-	biz    RoleBusiness
+	biz RoleBusiness
 }
 
 func NewRoleHandler(appCtx appctx.AppContext) *roleHandler {
-	repo := repository.NewRoleRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	repo := repository.NewRoleRepository(appCtx.GetMongoDBConnection())
 	biz := business.NewRoleBusiness(repo)
 
-	return &roleHandler{appCtx: appCtx, biz: biz}
+	return &roleHandler{biz: biz}
 }

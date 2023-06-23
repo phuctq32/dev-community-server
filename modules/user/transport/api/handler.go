@@ -19,15 +19,14 @@ type UserBusiness interface {
 }
 
 type userHandler struct {
-	appCtx   appctx.AppContext
 	business UserBusiness
 }
 
 func NewUserHandler(appCtx appctx.AppContext) *userHandler {
-	userRepo := repository.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
-	postRepo := postRepository.NewPostRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	userRepo := repository.NewUserRepository(appCtx.GetMongoDBConnection())
+	postRepo := postRepository.NewPostRepository(appCtx.GetMongoDBConnection())
 	hash := hasher.NewBcryptHash(10)
 
 	biz := business.NewUserBusiness(userRepo, postRepo, hash)
-	return &userHandler{appCtx: appCtx, business: biz}
+	return &userHandler{business: biz}
 }

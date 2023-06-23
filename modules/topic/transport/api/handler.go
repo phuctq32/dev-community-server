@@ -12,16 +12,16 @@ import (
 type TopicBusiness interface {
 	CreateTopic(ctx context.Context, data *entity.TopicCreate) (*entity.Topic, error)
 	GetTopics(ctx context.Context, filter common.Filter) ([]*entity.Topic, error)
+	GetTopicById(ctx context.Context, id string) (*entity.Topic, error)
 }
 
 type topicHandler struct {
-	appCtx appctx.AppContext
-	biz    TopicBusiness
+	biz TopicBusiness
 }
 
 func NewTopicHandler(appCtx appctx.AppContext) *topicHandler {
-	repo := repository.NewTopicRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	repo := repository.NewTopicRepository(appCtx.GetMongoDBConnection())
 	biz := business.NewTopicBusiness(repo)
 
-	return &topicHandler{appCtx: appCtx, biz: biz}
+	return &topicHandler{biz: biz}
 }

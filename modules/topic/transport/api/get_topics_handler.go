@@ -2,12 +2,13 @@ package api
 
 import (
 	"dev_community_server/common"
+	"dev_community_server/components/appctx"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
-func (hdl *topicHandler) GetTopics() gin.HandlerFunc {
+func (hdl *topicHandler) GetTopics(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var filter common.Filter
 		limit, gotLimit := c.GetQuery("limit")

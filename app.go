@@ -14,7 +14,7 @@ import (
 
 func Bootstrap() {
 	// Load Configs
-	appConfigs := configs.NewAppConfigs()
+	appConfigs := configs.NewConfigs()
 	appCtx := appctx.NewAppContext(appConfigs, common.NewValidator())
 
 	// Gin setup
@@ -36,7 +36,7 @@ func Bootstrap() {
 	routes.SetupRoutes(appCtx, router)
 
 	// Start
-	err := router.Run(fmt.Sprintf(":%v", *appConfigs.GetPort()))
+	err := router.Run(fmt.Sprintf(":%v", *appConfigs.GetAppConfig().GetPort()))
 	if err != nil {
 		panic(err)
 	}

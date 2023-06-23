@@ -2,13 +2,14 @@ package api
 
 import (
 	"dev_community_server/common"
+	"dev_community_server/components/appctx"
 	"dev_community_server/modules/post/entity"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
 )
 
-func (hdl *postHandler) UpdatePost() gin.HandlerFunc {
+func (hdl *postHandler) UpdatePost(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data entity.PostUpdate
 
@@ -16,7 +17,7 @@ func (hdl *postHandler) UpdatePost() gin.HandlerFunc {
 			panic(err)
 		}
 
-		if err := hdl.appCtx.GetValidator().Validate(data); err != nil {
+		if err := appCtx.GetValidator().Validate(data); err != nil {
 			panic(common.NewValidationError(err))
 		}
 

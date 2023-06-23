@@ -35,9 +35,6 @@ func (hdl *uploadHandler) UploadMultipleImage() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Upload successfully",
-			"urls":    urls,
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("Upload successfully", urls))
 	}
 }

@@ -5,24 +5,40 @@ import (
 	"log"
 )
 
-type AppConfig interface {
+type Config interface {
+	GetAppConfig() AppConfig
 	GetMongoDbConfig() MongoDBConfig
-	GetPort() *int
-	GetSecretKey() *string
 	GetSendGridConfig() SendGridConfig
 	GetCloudinaryConfig() CloudinaryConfig
 }
 
-type appConfigs struct {
+type AppConfig interface {
+	GetPort() *int
+	GetSecretKey() *string
+}
+
+type appConfig struct {
+	Port      int    `mapstructure:"PORT"`
+	SecretKey string `mapstructure:"SECRET_KEY"`
+}
+
+func (config *appConfig) GetPort() *int {
+	return &config.Port
+}
+
+func (config *appConfig) GetSecretKey() *string {
+	return &config.SecretKey
+}
+
+type configs struct {
+	appConfig        `mapstructure:",squash"`
 	mongoDBConfig    `mapstructure:",squash"`
 	sendgridConfig   `mapstructure:",squash"`
 	cloudinaryConfig `mapstructure:",squash"`
-	Port             int    `mapstructure:"PORT"`
-	SecretKey        string `mapstructure:"SECRET_KEY"`
 }
 
-func NewAppConfigs() AppConfig {
-	var configs *appConfigs
+func NewConfigs() Config {
+	var cfs *configs
 	viper.AddConfigPath(".")
 	viper.SetConfigFile(".env")
 
@@ -30,29 +46,25 @@ func NewAppConfigs() AppConfig {
 		log.Fatal(err)
 	}
 
-	if err := viper.Unmarshal(&configs); err != nil {
+	if err := viper.Unmarshal(&cfs); err != nil {
 		log.Fatal(err)
 	}
 
-	return configs
+	return cfs
 }
 
-func (config *appConfigs) GetPort() *int {
-	return &config.Port
+func (config *configs) GetAppConfig() AppConfig {
+	return &config.appConfig
 }
 
-func (config *appConfigs) GetSecretKey() *string {
-	return &config.SecretKey
-}
-
-func (config *appConfigs) GetMongoDbConfig() MongoDBConfig {
+func (config *configs) GetMongoDbConfig() MongoDBConfig {
 	return &config.mongoDBConfig
 }
 
-func (config *appConfigs) GetSendGridConfig() SendGridConfig {
+func (config *configs) GetSendGridConfig() SendGridConfig {
 	return &config.sendgridConfig
 }
 
-func (config *appConfigs) GetCloudinaryConfig() CloudinaryConfig {
+func (config *configs) GetCloudinaryConfig() CloudinaryConfig {
 	return &config.cloudinaryConfig
 }

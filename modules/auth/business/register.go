@@ -35,10 +35,10 @@ func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCrea
 	verifyCode := hex.EncodeToString(b)
 
 	mailConfig := mailer.NewEmailConfigWithDynamicTemplate(
-		*biz.appCtx.GetAppConfig().GetSendGridConfig().GetEmailFrom(),
+		*biz.appCtx.GetSendGridConfig().GetEmailFrom(),
 		data.Email,
 		"Verify email",
-		*biz.appCtx.GetAppConfig().GetSendGridConfig().GetVerifyTemplateId(),
+		*biz.appCtx.GetSendGridConfig().GetVerifyTemplateId(),
 		map[string]interface{}{
 			"username": data.FirstName + " " + data.LastName,
 			"url":      fmt.Sprintf("http://localhost:3000/verification/%v", verifyCode),

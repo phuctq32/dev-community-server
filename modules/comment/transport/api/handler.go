@@ -18,8 +18,8 @@ type commentHandler struct {
 }
 
 func NewCommentHandler(appCtx appctx.AppContext) *commentHandler {
-	cmtRepo := repository.NewCommentRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
-	userRepo := repository2.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	cmtRepo := repository.NewCommentRepository(appCtx.GetMongoDBConnection())
+	userRepo := repository2.NewUserRepository(appCtx.GetMongoDBConnection())
 
 	biz := business.NewCommentBusiness(cmtRepo, userRepo)
 

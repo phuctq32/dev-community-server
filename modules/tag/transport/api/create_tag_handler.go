@@ -2,12 +2,13 @@ package api
 
 import (
 	"dev_community_server/common"
+	"dev_community_server/components/appctx"
 	"dev_community_server/modules/tag/entity"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func (hdl *tagHandler) CreateTag() gin.HandlerFunc {
+func (hdl *tagHandler) CreateTag(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data entity.TagCreate
 
@@ -16,7 +17,7 @@ func (hdl *tagHandler) CreateTag() gin.HandlerFunc {
 			return
 		}
 
-		if err := hdl.appCtx.GetValidator().Validate(&data); err != nil {
+		if err := appCtx.GetValidator().Validate(&data); err != nil {
 			panic(common.NewValidationError(err))
 		}
 

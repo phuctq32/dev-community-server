@@ -18,14 +18,13 @@ type PostBusiness interface {
 }
 
 type postHandler struct {
-	appCtx   appctx.AppContext
 	business PostBusiness
 }
 
 func NewPostHandler(appCtx appctx.AppContext) *postHandler {
-	postRepo := repository.NewPostRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
-	userRepo := repository2.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	postRepo := repository.NewPostRepository(appCtx.GetMongoDBConnection())
+	userRepo := repository2.NewUserRepository(appCtx.GetMongoDBConnection())
 	biz := business.NewPostBusiness(postRepo, userRepo)
 
-	return &postHandler{appCtx: appCtx, business: biz}
+	return &postHandler{business: biz}
 }

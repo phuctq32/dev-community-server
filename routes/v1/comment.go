@@ -16,6 +16,6 @@ func NewCommentRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 	}
 	commentProtectedRouter := commentRouter.Use(middlewares.Authorize(appCtx))
 	{
-		commentProtectedRouter.POST("", commentHandler.CreateComment())
+		commentProtectedRouter.POST("", commentHandler.CreateComment(appCtx))
 	}
 }

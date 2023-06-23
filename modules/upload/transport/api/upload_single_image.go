@@ -33,9 +33,6 @@ func (hdl *uploadHandler) UploadSingleImage() gin.HandlerFunc {
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Upload success",
-			"url":     *url,
-		})
+		c.JSON(http.StatusOK, common.NewSimpleResponse("Upload success", url))
 	}
 }

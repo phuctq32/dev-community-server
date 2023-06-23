@@ -17,7 +17,7 @@ type uploadHandler struct {
 }
 
 func NewUploadHandler(appCtx appctx.AppContext) *uploadHandler {
-	cldProvider, _ := upload.NewCloudinaryProvider(appCtx.GetAppConfig().GetCloudinaryConfig())
+	cldProvider, _ := upload.NewCloudinaryProvider(appCtx.GetCloudinaryConfig())
 	biz := business.NewUploadBusiness(cldProvider)
 
 	return &uploadHandler{business: biz}

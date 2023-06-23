@@ -22,7 +22,7 @@ func (repo *tagRepository) Find(ctx context.Context, filter map[string]interface
 		return nil, common.NewServerError(err)
 	}
 
-	var tags []*entity.Tag = make([]*entity.Tag, 0)
+	tags := make([]*entity.Tag, 0)
 	if err := cursor.All(ctx, &tags); err != nil {
 		return nil, err
 	}

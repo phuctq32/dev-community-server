@@ -11,7 +11,7 @@ func NewRoleRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 
 	roleRouter := group.Group("/roles")
 	{
-		roleRouter.GET("", roleHandler.GetRoles())
-		roleRouter.POST("", roleHandler.CreateRole())
+		roleRouter.GET("", roleHandler.GetRoles(appCtx))
+		roleRouter.POST("", roleHandler.CreateRole(appCtx))
 	}
 }

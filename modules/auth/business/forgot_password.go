@@ -36,10 +36,10 @@ func (biz *authBusiness) ForgotPassword(ctx context.Context, email string) error
 	})
 
 	mailConfig := mailer.NewEmailConfigWithDynamicTemplate(
-		*biz.appCtx.GetAppConfig().GetSendGridConfig().GetEmailFrom(),
+		*biz.appCtx.GetSendGridConfig().GetEmailFrom(),
 		user.Email,
 		"Reset password",
-		*biz.appCtx.GetAppConfig().GetSendGridConfig().GetResetPasswordTemplateId(),
+		*biz.appCtx.GetSendGridConfig().GetResetPasswordTemplateId(),
 		map[string]interface{}{
 			"url": fmt.Sprintf("http://localhost:3000/reset-password/%v", resetCode),
 		},

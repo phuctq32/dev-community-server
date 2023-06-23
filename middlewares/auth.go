@@ -12,7 +12,7 @@ import (
 )
 
 func Authorize(appCtx appctx.AppContext) gin.HandlerFunc {
-	tokenProvider := jwt.NewJwtProvider(*appCtx.GetSecretKey())
+	tokenProvider := jwt.NewJwtProvider(*appCtx.GetAppConfig().GetSecretKey())
 
 	return func(c *gin.Context) {
 		// Extract token from header
@@ -21,8 +21,8 @@ func Authorize(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(common.NewNoPermissionError(errors.New("Wrong authorization header")))
 		}
 
-		userRepo := repository.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
-		roleRepo := repository2.NewRoleRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+		userRepo := repository.NewUserRepository(appCtx.GetMongoDBConnection())
+		roleRepo := repository2.NewRoleRepository(appCtx.GetMongoDBConnection())
 
 		payload, err := tokenProvider.Decode(parts[1])
 		if err != nil {

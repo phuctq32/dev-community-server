@@ -10,15 +10,17 @@ import (
 func NewUserRoutes(appCtx appctx.AppContext, v *gin.RouterGroup) {
 	userHandler := ginuser.NewUserHandler(appCtx)
 
+	currentUserRouter := v.Group("/me")
+	currentUserRouter.Use(middlewares.Authorize(appCtx))
+	{
+		currentUserRouter.GET("", userHandler.GetProfile(appCtx))
+		currentUserRouter.PATCH("", userHandler.UpdateUser(appCtx))
+		currentUserRouter.PATCH("/change-password", userHandler.ChangePasswordHandler(appCtx))
+	}
+
 	userRouter := v.Group("/users")
 	{
-		userRouter.GET("/:id", userHandler.GetUserById())
-		userRouter.GET("/posts/:userId", userHandler.GetPostsByUserId())
-	}
-	userProtectedRouter := userRouter.Use(middlewares.Authorize(appCtx))
-	{
-		userProtectedRouter.GET("/self", userHandler.GetProfile())
-		userProtectedRouter.PATCH("/self", userHandler.UpdateUser())
-		userProtectedRouter.PATCH("/self/change-password", userHandler.ChangePasswordHandler())
+		userRouter.GET("/:id", userHandler.GetUserById(appCtx))
+		userRouter.GET("/posts/:userId", userHandler.GetPostsByUserId(appCtx))
 	}
 }

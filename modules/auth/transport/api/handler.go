@@ -22,17 +22,16 @@ type AuthBusiness interface {
 }
 
 type authHandler struct {
-	appCtx   appctx.AppContext
 	business AuthBusiness
 }
 
 func NewAuthHandler(appCtx appctx.AppContext) *authHandler {
-	userRepo := userRepository.NewUserRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
-	roleRepo := repository.NewRoleRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	userRepo := userRepository.NewUserRepository(appCtx.GetMongoDBConnection())
+	roleRepo := repository.NewRoleRepository(appCtx.GetMongoDBConnection())
 	hashService := hasher.NewBcryptHash(12)
-	jwtProvider := jwt.NewJwtProvider(*appCtx.GetSecretKey())
-	sgService := sendgrid.NewSendGridProvider(*appCtx.GetAppConfig().GetSendGridConfig().GetApiKey())
+	jwtProvider := jwt.NewJwtProvider(*appCtx.GetAppConfig().GetSecretKey())
+	sgService := sendgrid.NewSendGridProvider(*appCtx.GetSendGridConfig().GetApiKey())
 	biz := business.NewAuthBusiness(appCtx, userRepo, roleRepo, hashService, jwtProvider, 30*24*60, sgService)
 
-	return &authHandler{appCtx: appCtx, business: biz}
+	return &authHandler{business: biz}
 }

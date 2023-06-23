@@ -13,12 +13,12 @@ func NewTopicRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 
 	topicRouter := group.Group("/topics")
 	{
-		topicRouter.GET("", topicHandler.GetTopics())
-
+		topicRouter.GET("", topicHandler.GetTopics(appCtx))
+		topicRouter.GET("/:id", topicHandler.GetTopicById(appCtx))
 	}
 
 	topicProtectedRouter := topicRouter.Use(middlewares.Authorize(appCtx))
 	{
-		topicProtectedRouter.POST("", middlewares.RequireRoles(common.ADMINISTRATOR), topicHandler.CreateTopic())
+		topicProtectedRouter.POST("", middlewares.RequireRoles(common.ADMINISTRATOR), topicHandler.CreateTopic(appCtx))
 	}
 }

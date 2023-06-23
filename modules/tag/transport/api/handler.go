@@ -15,14 +15,13 @@ type TagBusiness interface {
 }
 
 type tagHandler struct {
-	appCtx appctx.AppContext
-	biz    TagBusiness
+	biz TagBusiness
 }
 
 func NewTagHandler(appCtx appctx.AppContext) *tagHandler {
-	tagRepo := repository.NewTagRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
-	topicRepo := repository2.NewTopicRepository(appCtx.GetAppConfig().GetMongoDbConfig().GetConnection())
+	tagRepo := repository.NewTagRepository(appCtx.GetMongoDBConnection())
+	topicRepo := repository2.NewTopicRepository(appCtx.GetMongoDBConnection())
 	biz := business.NewTagBusiness(tagRepo, topicRepo)
 
-	return &tagHandler{appCtx: appCtx, biz: biz}
+	return &tagHandler{biz: biz}
 }
