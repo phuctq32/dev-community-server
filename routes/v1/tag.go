@@ -12,7 +12,7 @@ func NewTagRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 
 	tagRouter := group.Group("/tags")
 	{
-
+		tagRouter.GET("", tagHandler.GetTagsByTopicId())
 	}
 
 	tagProtectedRouter := tagRouter.Use(middlewares.Authorize(appCtx))

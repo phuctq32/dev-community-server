@@ -10,5 +10,5 @@ type Tag struct {
 	common.MongoId `bson:",inline" json:",inline"`
 	Name           string             `bson:"name" json:"name"`
 	TopicId        primitive.ObjectID `bson:"topic_id" json:"-"`
-	Topic          *entity.Topic      `bson:"-" json:"topic"`
+	Topic          *entity.Topic      `bson:"-" json:"topic,omitempty"`
 }
