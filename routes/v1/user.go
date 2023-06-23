@@ -17,8 +17,8 @@ func NewUserRoutes(appCtx appctx.AppContext, v *gin.RouterGroup) {
 	}
 	userProtectedRouter := userRouter.Use(middlewares.Authorize(appCtx))
 	{
-		userProtectedRouter.GET("/profile", userHandler.GetProfile())
-		userProtectedRouter.PATCH("/update", userHandler.UpdateUser())
-		userProtectedRouter.PATCH("/change_password", userHandler.ChangePasswordHandler())
+		userProtectedRouter.GET("/self", userHandler.GetProfile())
+		userProtectedRouter.PATCH("/self", userHandler.UpdateUser())
+		userProtectedRouter.PATCH("/self/change-password", userHandler.ChangePasswordHandler())
 	}
 }
