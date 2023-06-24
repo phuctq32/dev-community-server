@@ -6,7 +6,7 @@ import (
 	"dev_community_server/modules/topic/entity"
 )
 
-func (biz *topicBusiness) GetTopics(ctx context.Context, filter common.Filter) ([]*entity.Topic, error) {
+func (biz *topicBusiness) GetTopics(ctx context.Context, filter common.Filter) ([]entity.Topic, error) {
 	topics, err := biz.repo.Find(ctx, filter)
 	if err != nil {
 		return nil, err

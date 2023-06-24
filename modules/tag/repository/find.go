@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (repo *tagRepository) Find(ctx context.Context, filter map[string]interface{}) ([]*entity.Tag, error) {
+func (repo *tagRepository) Find(ctx context.Context, filter map[string]interface{}) ([]entity.Tag, error) {
 	if id, ok := filter["topic_id"]; ok {
 		objId, err := primitive.ObjectIDFromHex(id.(string))
 		if err != nil {
@@ -22,7 +22,7 @@ func (repo *tagRepository) Find(ctx context.Context, filter map[string]interface
 		return nil, common.NewServerError(err)
 	}
 
-	tags := make([]*entity.Tag, 0)
+	tags := make([]entity.Tag, 0)
 	if err := cursor.All(ctx, &tags); err != nil {
 		return nil, err
 	}

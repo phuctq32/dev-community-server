@@ -5,8 +5,8 @@ import (
 	"context"
 )
 
-func (biz *uploadBusiness) UploadImages(ctx context.Context, data [][]byte) ([]*string, error) {
-	var res []*string
+func (biz *uploadBusiness) UploadImages(ctx context.Context, data [][]byte) ([]string, error) {
+	var res []string
 
 	for _, b := range data {
 		fileBytes := bytes.NewBuffer(b)
@@ -14,7 +14,7 @@ func (biz *uploadBusiness) UploadImages(ctx context.Context, data [][]byte) ([]*
 		if err != nil {
 			return nil, err
 		}
-		res = append(res, url)
+		res = append(res, *url)
 	}
 
 	return res, nil

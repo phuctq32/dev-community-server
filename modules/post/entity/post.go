@@ -20,35 +20,35 @@ const (
 type Post struct {
 	common.MongoId         `bson:",inline" json:",inline"`
 	common.MongoTimestamps `bson:",inline" json:",inline"`
-	Title                  string                `bson:"title" json:"title"`
-	Content                string                `bson:"content" json:"content"`
-	Images                 []string              `bson:"images,omitempty" json:"images,omitempty"`
-	AuthorId               *primitive.ObjectID   `bson:"author_id" json:"-"`
-	TopicId                *primitive.ObjectID   `bson:"topic_id" json:"-"`
-	TagIds                 []*primitive.ObjectID `bson:"tag_ids" json:"-"`
-	Status                 PostStatus            `bson:"status" json:"status"`
-	UpVotes                []*primitive.ObjectID `bson:"up_votes" json:"up_votes"`
-	DownVotes              []*primitive.ObjectID `bson:"down_votes" json:"down_votes"`
-	ViewCount              int                   `bson:"view_count" json:"view_count"`
-	IsBlocked              bool                  `bson:"is_blocked" json:"is_blocked"`
+	Title                  string               `bson:"title" json:"title"`
+	Content                string               `bson:"content" json:"content"`
+	Images                 []string             `bson:"images,omitempty" json:"images,omitempty"`
+	AuthorId               *primitive.ObjectID  `bson:"author_id" json:"-"`
+	TopicId                *primitive.ObjectID  `bson:"topic_id" json:"-"`
+	TagIds                 []primitive.ObjectID `bson:"tag_ids" json:"-"`
+	Status                 PostStatus           `bson:"status" json:"status"`
+	UpVotes                []primitive.ObjectID `bson:"up_votes" json:"up_votes"`
+	DownVotes              []primitive.ObjectID `bson:"down_votes" json:"down_votes"`
+	ViewCount              int                  `bson:"view_count" json:"view_count"`
+	IsBlocked              bool                 `bson:"is_blocked" json:"is_blocked"`
 	// Computed fields
 	Score        int               `bson:"-" json:"score"`
 	Author       *userEntity.User  `bson:"-" json:"author,omitempty"`
 	Topic        *entity2.Topic    `bson:"-" json:"topic,omitempty"`
-	Tags         []*entity3.Tag    `bson:"-" json:"tags,omitempty"`
-	CommentCount *int              `bson:"-" json:"comment_count"`
-	Comments     []*entity.Comment `bson:"-" json:"comments,omitempty"` // Not include replies
+	Tags         *[]entity3.Tag    `bson:"-" json:"tags,omitempty"`
+	CommentCount int               `bson:"-" json:"comment_count"`
+	Comments     *[]entity.Comment `bson:"-" json:"comments,omitempty"` // Not include replies
 }
 
 func NewPost(data *PostCreate) *Post {
 	topicObjectId, _ := primitive.ObjectIDFromHex(data.TopicId)
-	tagObjectIds := make([]*primitive.ObjectID, len(data.TagIds))
+	tagObjectIds := make([]primitive.ObjectID, len(data.TagIds))
 	for i, tagId := range data.TagIds {
-		tagObjectId, _ := primitive.ObjectIDFromHex(*tagId)
-		tagObjectIds[i] = &tagObjectId
+		tagObjectId, _ := primitive.ObjectIDFromHex(tagId)
+		tagObjectIds[i] = tagObjectId
 	}
 	now := time.Now()
-	//emptyArrayComments := make([]*entity.Comment, 0)
+	//emptyArrayComments := make([]entity.Comment, 0)
 	return &Post{
 		MongoTimestamps: common.MongoTimestamps{
 			CreatedAt: &now,
@@ -61,14 +61,14 @@ func NewPost(data *PostCreate) *Post {
 		TopicId:   &topicObjectId,
 		TagIds:    tagObjectIds,
 		Status:    PENDING,
-		UpVotes:   []*primitive.ObjectID{},
-		DownVotes: []*primitive.ObjectID{},
+		UpVotes:   []primitive.ObjectID{},
+		DownVotes: []primitive.ObjectID{},
 		ViewCount: 0,
 		IsBlocked: false,
 		// Init computed fields
 		Score:        0,
-		CommentCount: new(int),
-		Comments:     []*entity.Comment{},
+		CommentCount: 0,
+		Comments:     &[]entity.Comment{},
 		Author:       data.Author,
 	}
 }

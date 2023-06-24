@@ -9,7 +9,7 @@ import (
 type TopicRepository interface {
 	Create(ctx context.Context, data *entity.TopicCreate) (*entity.Topic, error)
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Topic, error)
-	Find(ctx context.Context, filter common.Filter) ([]*entity.Topic, error)
+	Find(ctx context.Context, filter common.Filter) ([]entity.Topic, error)
 }
 
 type topicBusiness struct {

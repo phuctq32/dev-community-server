@@ -7,7 +7,7 @@ import (
 
 type RoleRepository interface {
 	Create(ctx context.Context, data *entity.RoleCreate) (*entity.Role, error)
-	Find(ctx context.Context) ([]*entity.Role, error)
+	Find(ctx context.Context) ([]entity.Role, error)
 }
 
 type roleBusiness struct {

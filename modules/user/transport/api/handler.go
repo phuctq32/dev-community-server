@@ -15,7 +15,7 @@ type UserBusiness interface {
 	GetUserById(ctx context.Context, id string) (user *entity.User, err error)
 	UpdateUser(ctx context.Context, id string, data *entity.UserUpdate) error
 	ChangePassword(ctx context.Context, id string, user *entity.UserChangePassword) error
-	GetPostsByUserId(ctx context.Context, userId string) ([]*postEntity.Post, error)
+	GetPostsByUserId(ctx context.Context, userId string) ([]postEntity.Post, error)
 }
 
 type userHandler struct {

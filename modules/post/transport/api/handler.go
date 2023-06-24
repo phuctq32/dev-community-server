@@ -14,7 +14,7 @@ import (
 
 type PostBusiness interface {
 	CreatePost(ctx context.Context, data *entity.PostCreate) (*entity.Post, error)
-	GetPosts(ctx context.Context, filter common.Filter) ([]*entity.Post, error)
+	GetPosts(ctx context.Context, filter common.Filter) ([]entity.Post, error)
 	UpdatePost(ctx context.Context, data *entity.PostUpdate) error
 	GetPostById(ctx context.Context, id *string) (*entity.Post, error)
 }

@@ -10,7 +10,7 @@ import (
 
 type RoleBusiness interface {
 	CreateRole(ctx context.Context, data *entity.RoleCreate) (*entity.Role, error)
-	GetRoles(ctx context.Context) ([]*entity.Role, error)
+	GetRoles(ctx context.Context) ([]entity.Role, error)
 }
 
 type roleHandler struct {

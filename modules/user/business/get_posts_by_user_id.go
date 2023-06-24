@@ -6,7 +6,7 @@ import (
 	"dev_community_server/modules/post/entity"
 )
 
-func (biz *userBusiness) GetPostsByUserId(ctx context.Context, userId string) ([]*entity.Post, error) {
+func (biz *userBusiness) GetPostsByUserId(ctx context.Context, userId string) ([]entity.Post, error) {
 	user, err := biz.userRepo.FindOne(ctx, map[string]interface{}{"id": userId})
 	if err != nil {
 		return nil, err

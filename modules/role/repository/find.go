@@ -7,13 +7,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (repo *roleRepository) Find(ctx context.Context) ([]*entity.Role, error) {
+func (repo *roleRepository) Find(ctx context.Context) ([]entity.Role, error) {
 	cursor, err := repo.roleColl.Find(ctx, bson.M{})
 	if err != nil {
 		return nil, common.NewServerError(err)
 	}
 
-	var roles []*entity.Role
+	var roles []entity.Role
 	if err := cursor.All(ctx, &roles); err != nil {
 		return nil, common.NewServerError(err)
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 type Validator interface {
-	Validate(obj interface{}) []*ValidationError
+	Validate(obj interface{}) []ValidationError
 }
 
 type ValidationError struct {
@@ -41,7 +41,7 @@ func NewValidator() *myValidator {
 	return &v
 }
 
-func (v *myValidator) Validate(obj interface{}) []*ValidationError {
+func (v *myValidator) Validate(obj interface{}) []ValidationError {
 	if err := v.validator.Struct(obj); err != nil {
 		return validationErrorsConverter(err)
 	}
@@ -77,10 +77,10 @@ func formatValidationError(err validator.FieldError) *ValidationError {
 	return res
 }
 
-func validationErrorsConverter(errs error) []*ValidationError {
-	var res []*ValidationError
+func validationErrorsConverter(errs error) []ValidationError {
+	var res []ValidationError
 	for _, err := range errs.(validator.ValidationErrors) {
-		res = append(res, formatValidationError(err))
+		res = append(res, *formatValidationError(err))
 	}
 
 	return res

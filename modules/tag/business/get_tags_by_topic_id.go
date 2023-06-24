@@ -6,7 +6,7 @@ import (
 	"dev_community_server/modules/tag/entity"
 )
 
-func (biz *tagBusiness) GetTagsByTopicId(ctx context.Context, topicId string) ([]*entity.Tag, error) {
+func (biz *tagBusiness) GetTagsByTopicId(ctx context.Context, topicId string) ([]entity.Tag, error) {
 	topic, err := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": topicId})
 	if err != nil {
 		return nil, err

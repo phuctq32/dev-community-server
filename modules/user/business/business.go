@@ -15,7 +15,7 @@ type UserRepository interface {
 }
 
 type PostRepository interface {
-	Find(ctx context.Context, filter common.Filter) ([]*postEntity.Post, error)
+	Find(ctx context.Context, filter common.Filter) ([]postEntity.Post, error)
 }
 
 type userBusiness struct {

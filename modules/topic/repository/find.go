@@ -9,7 +9,7 @@ import (
 	"math"
 )
 
-func (repo *topicRepository) Find(ctx context.Context, filter common.Filter) ([]*entity.Topic, error) {
+func (repo *topicRepository) Find(ctx context.Context, filter common.Filter) ([]entity.Topic, error) {
 	opts := options.Find().SetLimit(int64(*filter.Limit)).SetSkip((int64(math.Abs(float64(*filter.Page-1))) * int64(*filter.Limit)))
 
 	cursor, err := repo.topicColl.Find(ctx, bson.M{}, opts)
@@ -17,7 +17,7 @@ func (repo *topicRepository) Find(ctx context.Context, filter common.Filter) ([]
 		return nil, err
 	}
 
-	var topics []*entity.Topic
+	var topics []entity.Topic
 	if err := cursor.All(ctx, &topics); err != nil {
 		return nil, err
 	}

@@ -10,7 +10,7 @@ import (
 	"math"
 )
 
-func (repo *postRepository) Find(ctx context.Context, filter common.Filter) ([]*entity.Post, error) {
+func (repo *postRepository) Find(ctx context.Context, filter common.Filter) ([]entity.Post, error) {
 	if id, ok := filter.Other["author_id"]; ok {
 		objId, err := primitive.ObjectIDFromHex(id.(string))
 		if err != nil {
@@ -93,7 +93,7 @@ func (repo *postRepository) Find(ctx context.Context, filter common.Filter) ([]*
 		return nil, common.NewServerError(err)
 	}
 
-	var posts []*entity.Post
+	var posts []entity.Post
 	if err = cursor.All(ctx, &posts); err != nil {
 		return nil, common.NewServerError(err)
 	}
@@ -153,7 +153,7 @@ func (repo *postRepository) FindOne(ctx context.Context, filter map[string]inter
 		return nil, err
 	}
 
-	var posts []*entity.Post
+	var posts []entity.Post
 	if err = cursor.All(ctx, &posts); err != nil {
 		return nil, err
 	}
@@ -161,5 +161,5 @@ func (repo *postRepository) FindOne(ctx context.Context, filter map[string]inter
 		return nil, nil
 	}
 
-	return posts[0], nil
+	return &posts[0], nil
 }

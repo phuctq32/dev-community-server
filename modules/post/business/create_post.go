@@ -16,24 +16,24 @@ func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate
 		return nil, common.NewNotFoundError("Topic", common.ErrNotFound)
 	}
 
-	tags := make([]*entity2.Tag, len(data.TagNames))
+	tags := make([]entity2.Tag, len(data.TagNames))
 
-	data.TagIds = make([]*string, len(data.TagNames))
+	data.TagIds = make([]string, len(data.TagNames))
 	for i, tagName := range data.TagNames {
-		tag, err := biz.tagRepo.FindOne(ctx, map[string]interface{}{"name": *tagName, "topic_id": topic.Id})
+		tag, err := biz.tagRepo.FindOne(ctx, map[string]interface{}{"name": tagName, "topic_id": topic.Id})
 		if err != nil {
 			return nil, err
 		}
 		if tag == nil {
-			tag, err = biz.tagRepo.Create(ctx, &entity2.TagCreate{Name: *tagName, TopicId: topic.Id.Hex()})
+			tag, err = biz.tagRepo.Create(ctx, &entity2.TagCreate{Name: tagName, TopicId: topic.Id.Hex()})
 			if err != nil {
 				return nil, err
 			}
 		}
 		tagId := tag.Id.Hex()
-		data.TagIds[i] = &tagId
+		data.TagIds[i] = tagId
 
-		tags[i] = tag
+		tags[i] = *tag
 	}
 
 	post, err := biz.postRepo.Create(ctx, data)
@@ -41,7 +41,7 @@ func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate
 		return nil, err
 	}
 	post.Topic = topic
-	post.Tags = tags
+	post.Tags = &tags
 
 	return post, nil
 }

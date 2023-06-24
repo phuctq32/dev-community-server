@@ -9,7 +9,7 @@ import (
 
 type UploadBusiness interface {
 	UploadImage(ctx context.Context, data []byte) (*string, error)
-	UploadImages(ctx context.Context, data [][]byte) ([]*string, error)
+	UploadImages(ctx context.Context, data [][]byte) ([]string, error)
 }
 
 type uploadHandler struct {

@@ -11,7 +11,7 @@ import (
 
 type TagBusiness interface {
 	CreateTag(ctx context.Context, data *entity.TagCreate) (*entity.Tag, error)
-	GetTagsByTopicId(ctx context.Context, topicId string) ([]*entity.Tag, error)
+	GetTagsByTopicId(ctx context.Context, topicId string) ([]entity.Tag, error)
 }
 
 type tagHandler struct {

@@ -11,7 +11,7 @@ import (
 
 type PostRepository interface {
 	Create(ctx context.Context, data *entity.PostCreate) (*entity.Post, error)
-	Find(ctx context.Context, filter common.Filter) ([]*entity.Post, error)
+	Find(ctx context.Context, filter common.Filter) ([]entity.Post, error)
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Post, error)
 	Update(ctx context.Context, id string, data map[string]interface{}) error
 }

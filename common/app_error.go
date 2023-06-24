@@ -12,19 +12,19 @@ import (
 var ErrNotFound = mongo.ErrNoDocuments
 
 type AppError struct {
-	StatusCode      int                `json:"status_code"`
-	Key             string             `json:"error_key"`
-	Message         string             `json:"message"`
-	RootErr         error              `json:"-"`
-	Log             string             `json:"-"`
-	ValidationError []*ValidationError `json:"validation_errors,omitempty"`
+	StatusCode      int               `json:"status_code"`
+	Key             string            `json:"error_key"`
+	Message         string            `json:"message"`
+	RootErr         error             `json:"-"`
+	Log             string            `json:"-"`
+	ValidationError []ValidationError `json:"validation_errors,omitempty"`
 }
 
 type AppErrorLog struct {
-	Key             string             `json:"error_key"`
-	RootErr         error              `json:"root_error"`
-	Log             string             `json:"log"`
-	ValidationError []*ValidationError `json:"validation_errors,omitempty"`
+	Key             string            `json:"error_key"`
+	RootErr         error             `json:"root_error"`
+	Log             string            `json:"log"`
+	ValidationError []ValidationError `json:"validation_errors,omitempty"`
 }
 
 func (err *AppError) Error() string {
@@ -114,12 +114,12 @@ func NewExistingError(entity string) *AppError {
 	)
 }
 
-func NewValidationError(err []*ValidationError) *AppError {
+func NewValidationError(err []ValidationError) *AppError {
 	return &AppError{
 		StatusCode:      http.StatusUnprocessableEntity,
 		Key:             "VALIDATION_ERROR",
 		Message:         fmt.Sprintf("%v: %v", err[0].Field, err[0].Message),
 		ValidationError: err,
-		RootErr:         err[0],
+		RootErr:         &err[0],
 	}
 }

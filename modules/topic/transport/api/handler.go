@@ -11,7 +11,7 @@ import (
 
 type TopicBusiness interface {
 	CreateTopic(ctx context.Context, data *entity.TopicCreate) (*entity.Topic, error)
-	GetTopics(ctx context.Context, filter common.Filter) ([]*entity.Topic, error)
+	GetTopics(ctx context.Context, filter common.Filter) ([]entity.Topic, error)
 	GetTopicById(ctx context.Context, id string) (*entity.Topic, error)
 }
 
