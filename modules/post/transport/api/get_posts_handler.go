@@ -10,7 +10,7 @@ import (
 
 func (hdl *postHandler) GetPosts(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var filter common.Filter
+		var pagination *common.Pagination
 		limit, gotLimit := c.GetQuery("limit")
 		page, gotPage := c.GetQuery("page")
 		if gotLimit && gotPage {
@@ -23,26 +23,18 @@ func (hdl *postHandler) GetPosts(appCtx appctx.AppContext) gin.HandlerFunc {
 				panic(err)
 			}
 
-			if intPage < 1 {
-				intPage = 1
+			pagination = &common.Pagination{
+				Limit: &intLimit,
+				Page:  &intPage,
 			}
-
-			if intLimit < 10 {
-				intLimit = 10
-			}
-
-			filter.Page = &intPage
-			filter.Limit = &intLimit
-		} else {
-			filter.Page = nil
-			filter.Limit = nil
 		}
 
-		posts, err := hdl.business.GetPosts(c.Request.Context(), filter)
+		posts, paginationInfo, err := hdl.business.GetPosts(c.Request.Context(), map[string]interface{}{}, pagination)
 		if err != nil {
 			panic(err)
 		}
+		postCount := len(posts)
 
-		c.JSON(http.StatusOK, common.NewSimpleResponse("", posts))
+		c.JSON(http.StatusOK, common.NewFullResponse("", posts, &postCount, paginationInfo))
 	}
 }

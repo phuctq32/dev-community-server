@@ -40,7 +40,7 @@ func NewUser(user *UserCreate) *User {
 		LastName:  user.LastName,
 		Password:  user.Password,
 		Birthday:  &birthday,
-		Avatar:    common.DEFAULT_AVATAR_URL,
+		Avatar:    common.DefaultAvatarUrl,
 		RoleId:    user.RoleId,
 		VerifiedToken: &Token{
 			Token:     user.VerifiedToken,

@@ -46,11 +46,11 @@ func (hdl *postHandler) SearchPost(appCtx appctx.AppContext) gin.HandlerFunc {
 			filter.Search = &search
 		}
 
-		posts, err := hdl.business.GetPosts(c.Request.Context(), filter)
-		if err != nil {
-			panic(err)
-		}
+		//posts, err := hdl.business.GetPosts(c.Request.Context(), filter)
+		//if err != nil {
+		//	panic(err)
+		//}
 
-		c.JSON(http.StatusOK, common.NewSimpleResponse("", posts))
+		c.JSON(http.StatusOK, common.NewSimpleResponse("", ""))
 	}
 }

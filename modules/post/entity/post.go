@@ -32,12 +32,12 @@ type Post struct {
 	ViewCount              int                  `bson:"view_count" json:"view_count"`
 	IsBlocked              bool                 `bson:"is_blocked" json:"is_blocked"`
 	// Computed fields
-	Score        int               `bson:"-" json:"score"`
-	Author       *userEntity.User  `bson:"-" json:"author,omitempty"`
-	Topic        *entity2.Topic    `bson:"-" json:"topic,omitempty"`
-	Tags         *[]entity3.Tag    `bson:"-" json:"tags,omitempty"`
-	CommentCount int               `bson:"-" json:"comment_count"`
-	Comments     *[]entity.Comment `bson:"-" json:"comments,omitempty"` // Not include replies
+	Score        int              `bson:"-" json:"score"`
+	Author       *userEntity.User `bson:"-" json:"author,omitempty"`
+	Topic        *entity2.Topic   `bson:"-" json:"topic,omitempty"`
+	Tags         []entity3.Tag    `bson:"-" json:"tags"`
+	CommentCount int              `bson:"-" json:"comment_count"`
+	Comments     []entity.Comment `bson:"-" json:"comments,omitempty"` // Not include replies
 }
 
 func NewPost(data *PostCreate) *Post {
@@ -67,8 +67,9 @@ func NewPost(data *PostCreate) *Post {
 		IsBlocked: false,
 		// Init computed fields
 		Score:        0,
-		CommentCount: 0,
-		Comments:     &[]entity.Comment{},
 		Author:       data.Author,
+		Tags:         []entity3.Tag{},
+		CommentCount: 0,
+		Comments:     []entity.Comment{},
 	}
 }

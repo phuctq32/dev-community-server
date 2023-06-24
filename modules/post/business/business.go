@@ -11,9 +11,10 @@ import (
 
 type PostRepository interface {
 	Create(ctx context.Context, data *entity.PostCreate) (*entity.Post, error)
-	Find(ctx context.Context, filter common.Filter) ([]entity.Post, error)
+	Count(ctx context.Context, filter map[string]interface{}) (*int, error)
+	Find(ctx context.Context, filter map[string]interface{}, pagination *common.Pagination) ([]entity.Post, error)
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Post, error)
-	Update(ctx context.Context, id string, data map[string]interface{}) error
+	Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*entity.Post, error)
 }
 
 type UserRepository interface {

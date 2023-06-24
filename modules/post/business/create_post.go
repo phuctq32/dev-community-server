@@ -5,6 +5,7 @@ import (
 	"dev_community_server/common"
 	"dev_community_server/modules/post/entity"
 	entity2 "dev_community_server/modules/tag/entity"
+	"log"
 )
 
 func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate) (*entity.Post, error) {
@@ -17,6 +18,7 @@ func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate
 	}
 
 	tags := make([]entity2.Tag, len(data.TagNames))
+	log.Println(data.TagNames)
 
 	data.TagIds = make([]string, len(data.TagNames))
 	for i, tagName := range data.TagNames {
@@ -41,7 +43,7 @@ func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate
 		return nil, err
 	}
 	post.Topic = topic
-	post.Tags = &tags
+	post.Tags = tags
 
 	return post, nil
 }

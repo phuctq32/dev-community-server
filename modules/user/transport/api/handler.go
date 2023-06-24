@@ -5,7 +5,6 @@ import (
 	"dev_community_server/components/appctx"
 	"dev_community_server/components/hasher"
 	postEntity "dev_community_server/modules/post/entity"
-	postRepository "dev_community_server/modules/post/repository"
 	"dev_community_server/modules/user/business"
 	"dev_community_server/modules/user/entity"
 	"dev_community_server/modules/user/repository"
@@ -24,9 +23,8 @@ type userHandler struct {
 
 func NewUserHandler(appCtx appctx.AppContext) *userHandler {
 	userRepo := repository.NewUserRepository(appCtx.GetMongoDBConnection())
-	postRepo := postRepository.NewPostRepository(appCtx.GetMongoDBConnection())
 	hash := hasher.NewBcryptHash(10)
 
-	biz := business.NewUserBusiness(userRepo, postRepo, hash)
+	biz := business.NewUserBusiness(userRepo, hash)
 	return &userHandler{business: biz}
 }

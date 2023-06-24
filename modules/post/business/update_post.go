@@ -4,35 +4,73 @@ import (
 	"context"
 	"dev_community_server/common"
 	"dev_community_server/modules/post/entity"
+	entity2 "dev_community_server/modules/tag/entity"
 )
 
-func (biz *postBusiness) UpdatePost(ctx context.Context, data *entity.PostUpdate) error {
-	user, err := biz.userRepo.FindOne(ctx, map[string]interface{}{"id": *data.AuthorId})
-	if err != nil {
-		return err
-	}
-	if user == nil {
-		return common.NewNotFoundError("User", common.ErrNotFound)
-	}
-
+func (biz *postBusiness) UpdatePost(ctx context.Context, data *entity.PostUpdate) (*entity.Post, error) {
 	post, err := biz.postRepo.FindOne(ctx, map[string]interface{}{"id": *data.Id})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if post == nil {
-		return common.NewNotFoundError("Post", err)
+		return nil, common.NewNotFoundError("Post", err)
 	}
 
-	// check if user is author
-	if post.AuthorId.Hex() != *data.AuthorId {
-		return common.NewCustomBadRequestError("User is not author")
+	// Check if user is post's author
+	if post.AuthorId.Hex() != data.Author.Id.Hex() {
+		return nil, common.NewCustomBadRequestError("User is not author")
 	}
 
-	update, _ := common.StructToMap(data)
+	// Get current post's topic
+	topic, _ := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": post.TopicId.Hex()})
+	// Find topic if data.TopicId exists
+	if data.TopicId != nil {
+		existingTopic, err := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": *data.TopicId})
+		if err != nil {
+			return nil, err
+		}
+		if existingTopic == nil {
+			return nil, common.NewNotFoundError("Topic", common.ErrNotFound)
+		}
 
-	if err = biz.postRepo.Update(ctx, *data.Id, update); err != nil {
-		return err
+		// Change post's topic
+		topic = existingTopic
 	}
 
-	return nil
+	// Find tags if data.TagNames exists
+	if len(data.TagNames) > 0 {
+		data.TagIds = make([]string, len(data.TagNames))
+		for i, tagName := range data.TagNames {
+			tag, err := biz.tagRepo.FindOne(ctx, map[string]interface{}{"name": tagName, "topic_id": topic.Id})
+			if err != nil {
+				return nil, err
+			}
+			if tag == nil {
+				tag, err = biz.tagRepo.Create(ctx, &entity2.TagCreate{Name: tagName, TopicId: topic.Id.Hex()})
+				if err != nil {
+					return nil, err
+				}
+			}
+			data.TagIds[i] = tag.Id.Hex()
+		}
+	}
+
+	// Convert data to map
+	updateData, _ := common.StructToMap(data)
+
+	updatedPost, err := biz.postRepo.Update(ctx, map[string]interface{}{"id": *data.Id}, updateData)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedPost.Author = data.Author
+	updatedPost.Topic = topic
+
+	updatedPost.Tags = make([]entity2.Tag, len(updatedPost.TagIds))
+	for i, id := range updatedPost.TagIds {
+		tag, _ := biz.tagRepo.FindOne(ctx, map[string]interface{}{"id": id.Hex()})
+		updatedPost.Tags[i] = *tag
+	}
+
+	return updatedPost, nil
 }
