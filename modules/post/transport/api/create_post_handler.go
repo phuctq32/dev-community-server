@@ -4,8 +4,8 @@ import (
 	"dev_community_server/common"
 	"dev_community_server/components/appctx"
 	"dev_community_server/modules/post/entity"
+	userEntity "dev_community_server/modules/user/entity"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -15,22 +15,20 @@ func (hdl *postHandler) CreatePost(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		if err := c.ShouldBind(&data); err != nil {
 			panic(err)
-			return
 		}
 
 		if err := appCtx.GetValidator().Validate(data); err != nil {
 			panic(common.NewValidationError(err))
-			return
 		}
 
 		requester := c.MustGet(common.ReqUser).(common.Requester)
-		data.AuthorId = requester.GetUserId()
-		log.Println(data)
+		data.Author = requester.(*userEntity.User)
 
-		if err := hdl.business.CreatePost(c.Request.Context(), &data); err != nil {
+		post, err := hdl.business.CreatePost(c.Request.Context(), &data)
+		if err != nil {
 			panic(err)
 		}
 
-		c.JSON(http.StatusCreated, common.NewSimpleResponse("Created post successfully", nil))
+		c.JSON(http.StatusCreated, common.NewSimpleResponse("Created post successfully", post))
 	}
 }

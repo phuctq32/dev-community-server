@@ -7,11 +7,13 @@ import (
 	"dev_community_server/modules/post/business"
 	"dev_community_server/modules/post/entity"
 	"dev_community_server/modules/post/repository"
+	repository4 "dev_community_server/modules/tag/repository"
+	repository3 "dev_community_server/modules/topic/repository"
 	repository2 "dev_community_server/modules/user/repository"
 )
 
 type PostBusiness interface {
-	CreatePost(ctx context.Context, data *entity.PostCreate) error
+	CreatePost(ctx context.Context, data *entity.PostCreate) (*entity.Post, error)
 	GetPosts(ctx context.Context, filter common.Filter) ([]*entity.Post, error)
 	UpdatePost(ctx context.Context, data *entity.PostUpdate) error
 	GetPostById(ctx context.Context, id *string) (*entity.Post, error)
@@ -24,7 +26,9 @@ type postHandler struct {
 func NewPostHandler(appCtx appctx.AppContext) *postHandler {
 	postRepo := repository.NewPostRepository(appCtx.GetMongoDBConnection())
 	userRepo := repository2.NewUserRepository(appCtx.GetMongoDBConnection())
-	biz := business.NewPostBusiness(postRepo, userRepo)
+	topicRepo := repository3.NewTopicRepository(appCtx.GetMongoDBConnection())
+	tagRepo := repository4.NewTagRepository(appCtx.GetMongoDBConnection())
+	biz := business.NewPostBusiness(postRepo, userRepo, topicRepo, tagRepo)
 
 	return &postHandler{business: biz}
 }
