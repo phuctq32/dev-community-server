@@ -5,10 +5,15 @@ import (
 	"dev_community_server/common"
 	"dev_community_server/modules/post/entity"
 	entity2 "dev_community_server/modules/tag/entity"
-	"log"
 )
 
 func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate) (*entity.Post, error) {
+	if data.Author.GetRoleType() == common.Administrator ||
+		data.Author.GetRoleType() == common.Moderator {
+		data.Status = entity.Approved
+	} else {
+		data.Status = entity.Pending
+	}
 	topic, err := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": data.TopicId})
 	if err != nil {
 		return nil, err
@@ -18,7 +23,6 @@ func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate
 	}
 
 	tags := make([]entity2.Tag, len(data.TagNames))
-	log.Println(data.TagNames)
 
 	data.TagIds = make([]string, len(data.TagNames))
 	for i, tagName := range data.TagNames {
@@ -42,6 +46,7 @@ func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate
 	if err != nil {
 		return nil, err
 	}
+	post.Author = data.Author
 	post.Topic = topic
 	post.Tags = tags
 

@@ -60,7 +60,7 @@ func NewPost(data *PostCreate) *Post {
 		Images:    data.Images,
 		TopicId:   &topicObjectId,
 		TagIds:    tagObjectIds,
-		Status:    Pending,
+		Status:    data.Status,
 		UpVotes:   []primitive.ObjectID{},
 		DownVotes: []primitive.ObjectID{},
 		ViewCount: 0,
