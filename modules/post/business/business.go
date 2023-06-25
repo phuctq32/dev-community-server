@@ -15,6 +15,8 @@ type PostRepository interface {
 	Find(ctx context.Context, filter map[string]interface{}, pagination *common.Pagination) ([]entity.Post, error)
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Post, error)
 	Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*entity.Post, error)
+	Search(ctx context.Context, searchTerm *string, pagination *common.Pagination) ([]entity.Post, error)
+	CountSearch(ctx context.Context, searchTerm *string) (*int, error)
 }
 
 type UserRepository interface {

@@ -17,6 +17,7 @@ type PostBusiness interface {
 	GetPosts(ctx context.Context, filter map[string]interface{}, pagination *common.Pagination) ([]entity.Post, *common.PaginationInformation, error)
 	UpdatePost(ctx context.Context, data *entity.PostUpdate) (*entity.Post, error)
 	GetPostById(ctx context.Context, id *string) (*entity.Post, error)
+	SearchPosts(ctx context.Context, searchTerm *string, pagination *common.Pagination) ([]entity.Post, *common.PaginationInformation, error)
 }
 
 type postHandler struct {

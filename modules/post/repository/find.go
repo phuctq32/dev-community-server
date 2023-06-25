@@ -122,5 +122,9 @@ func (repo *postRepository) Find(
 		return nil, err
 	}
 
+	if posts == nil {
+		return []entity.Post{}, nil
+	}
+
 	return posts, nil
 }

@@ -6,11 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func (hdl *postHandler) SearchPost(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var filter common.Filter
+		var pagination *common.Pagination
 		limit, gotLimit := c.GetQuery("limit")
 		page, gotPage := c.GetQuery("page")
 		if gotLimit && gotPage {
@@ -23,34 +24,24 @@ func (hdl *postHandler) SearchPost(appCtx appctx.AppContext) gin.HandlerFunc {
 				panic(err)
 			}
 
-			if intPage < 1 {
-				intPage = 1
+			pagination = &common.Pagination{
+				Limit: &intLimit,
+				Page:  &intPage,
 			}
-
-			if intLimit < 10 {
-				intLimit = 10
-			}
-
-			filter.Page = &intPage
-			filter.Limit = &intLimit
-		} else {
-			var (
-				page  int = 1
-				limit int = 10
-			)
-			filter.Page = &page
-			filter.Limit = &limit
 		}
 
+		searchTerm := ""
 		if search, ok := c.GetQuery("q"); ok {
-			filter.Search = &search
+			searchTerm = strings.TrimSpace(search)
 		}
 
-		//posts, err := hdl.business.GetPosts(c.Request.Context(), filter)
-		//if err != nil {
-		//	panic(err)
-		//}
+		posts, paginationInfo, err := hdl.business.SearchPosts(c.Request.Context(), &searchTerm, pagination)
+		if err != nil {
+			panic(err)
+		}
 
-		c.JSON(http.StatusOK, common.NewSimpleResponse("", ""))
+		postCount := len(posts)
+
+		c.JSON(http.StatusOK, common.NewFullResponse("", posts, &postCount, paginationInfo))
 	}
 }

@@ -5,9 +5,13 @@ import (
 	"dev_community_server/common"
 	"dev_community_server/modules/post/entity"
 	entity2 "dev_community_server/modules/tag/entity"
+	"strings"
 )
 
-func (biz *postBusiness) GetPosts(ctx context.Context, filter map[string]interface{}, pagination *common.Pagination) ([]entity.Post, *common.PaginationInformation, error) {
+func (biz *postBusiness) SearchPosts(ctx context.Context, searchTerm *string, pagination *common.Pagination) ([]entity.Post, *common.PaginationInformation, error) {
+	*searchTerm = strings.Replace(*searchTerm, "+", " ", -1)
+	*searchTerm = common.RemoveVietnameseAccent(*searchTerm)
+
 	if pagination != nil {
 		if *pagination.Limit < 0 {
 			*pagination.Limit = common.DefaultPage
@@ -16,11 +20,12 @@ func (biz *postBusiness) GetPosts(ctx context.Context, filter map[string]interfa
 			*pagination.Page = common.DefaultPage
 		}
 	}
-	posts, err := biz.postRepo.Find(ctx, filter, pagination)
+
+	posts, err := biz.postRepo.Search(ctx, searchTerm, pagination)
 	if err != nil {
 		return nil, nil, err
 	}
-	totalPostCount, err := biz.postRepo.Count(ctx, filter)
+	totalPostCount, err := biz.postRepo.CountSearch(ctx, searchTerm)
 	if err != nil {
 		return nil, nil, err
 	}
