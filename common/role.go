@@ -3,7 +3,7 @@ package common
 type RoleType int
 
 const (
-	ADMINISTRATOR RoleType = iota
-	MODERATOR
-	MEMBER
+	Administrator RoleType = iota
+	Moderator
+	Member
 )

@@ -20,7 +20,10 @@ func (repo *postRepository) Search(
 	}
 
 	// Text search
-	filter := bson.M{"$text": bson.M{"$search": searchTerm}}
+	filter := bson.M{"status": entity.Approved, "$text": bson.M{"$search": searchTerm}}
+
+	// Sort descending by text score
+	opts.SetSort(bson.M{"score": bson.M{"$meta": "textScore"}})
 
 	cursor, err := repo.postColl.Find(ctx, filter, opts)
 	if err != nil {

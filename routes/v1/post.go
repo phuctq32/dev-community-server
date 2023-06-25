@@ -1,6 +1,7 @@
 package routesv1
 
 import (
+	"dev_community_server/common"
 	"dev_community_server/components/appctx"
 	"dev_community_server/middlewares"
 	"dev_community_server/modules/post/transport/api"
@@ -21,5 +22,8 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 	{
 		postProtectedRouter.POST("", postHandler.CreatePost(appCtx))
 		postProtectedRouter.PATCH("/:id", postHandler.UpdatePost(appCtx))
+		postProtectedRouter.POST("/:id/approve", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.ApprovePostHandler(appCtx))
+		postProtectedRouter.POST("/:id/block", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.BlockPostHandler(appCtx))
+		postProtectedRouter.POST("/:id/unblock", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.UnblockPostHandler(appCtx))
 	}
 }

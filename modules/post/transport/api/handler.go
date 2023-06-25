@@ -18,6 +18,9 @@ type PostBusiness interface {
 	UpdatePost(ctx context.Context, data *entity.PostUpdate) (*entity.Post, error)
 	GetPostById(ctx context.Context, id *string) (*entity.Post, error)
 	SearchPosts(ctx context.Context, searchTerm *string, pagination *common.Pagination) ([]entity.Post, *common.PaginationInformation, error)
+	ApprovePostById(ctx context.Context, postId *string, user *common.Requester) (*entity.Post, error)
+	BlockPost(ctx context.Context, postId *string, user *common.Requester) (*entity.Post, error)
+	UnblockPost(ctx context.Context, postId *string, user *common.Requester) (*entity.Post, error)
 }
 
 type postHandler struct {

@@ -27,6 +27,6 @@ func (hdl *tagHandler) GetTagsByTopicId(appCtx appctx.AppContext) gin.HandlerFun
 			panic(err)
 		}
 
-		c.JSON(http.StatusOK, common.NewFullResponse("", tags, &length, nil, nil))
+		c.JSON(http.StatusOK, common.NewFullResponse("", tags, &length, nil))
 	}
 }

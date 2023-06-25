@@ -49,7 +49,7 @@ func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCrea
 	}
 	data.VerifiedToken = verifyCode
 
-	role, err := biz.roleRepo.FindOne(ctx, map[string]interface{}{"type": common.MEMBER})
+	role, err := biz.roleRepo.FindOne(ctx, map[string]interface{}{"type": common.Member})
 	if err != nil {
 		return err
 	}

@@ -13,8 +13,8 @@ import (
 type PostStatus uint8
 
 const (
-	PENDING PostStatus = iota
-	APPROVED
+	Pending PostStatus = iota
+	Approved
 )
 
 type Post struct {
@@ -60,7 +60,7 @@ func NewPost(data *PostCreate) *Post {
 		Images:    data.Images,
 		TopicId:   &topicObjectId,
 		TagIds:    tagObjectIds,
-		Status:    PENDING,
+		Status:    Pending,
 		UpVotes:   []primitive.ObjectID{},
 		DownVotes: []primitive.ObjectID{},
 		ViewCount: 0,

@@ -4,7 +4,6 @@ import (
 	"context"
 	"dev_community_server/common"
 	"dev_community_server/modules/post/entity"
-	entity2 "dev_community_server/modules/tag/entity"
 	"strings"
 )
 
@@ -31,25 +30,9 @@ func (biz *postBusiness) SearchPosts(ctx context.Context, searchTerm *string, pa
 	}
 
 	for i := range posts {
-		// Get author
-		author, _ := biz.userRepo.FindOne(ctx, map[string]interface{}{"id": posts[i].AuthorId.Hex()})
-		posts[i].Author = author
-
-		// Get topic
-		topic, _ := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": posts[i].TopicId.Hex()})
-		posts[i].Topic = topic
-
-		// Get tags
-		posts[i].Tags = make([]entity2.Tag, len(posts[i].TagIds))
-		for j, id := range posts[i].TagIds {
-			tag, _ := biz.tagRepo.FindOne(ctx, map[string]interface{}{"id": id.Hex()})
-			posts[i].Tags[j] = *tag
+		if err := biz.SetComputedData(ctx, &posts[i]); err != nil {
+			return nil, nil, err
 		}
-
-		// Get comments (not include replies) and count total comments (included replies)
-
-		// Calc score
-		posts[i].Score = len(posts[i].UpVotes) - len(posts[i].DownVotes)
 	}
 
 	var paginationInfo *common.PaginationInformation
