@@ -22,8 +22,23 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 	{
 		postProtectedRouter.POST("", postHandler.CreatePost(appCtx))
 		postProtectedRouter.PATCH("/:id", postHandler.UpdatePost(appCtx))
+		postProtectedRouter.DELETE("/:id")
+		postProtectedRouter.POST("/:id/view")
 		postProtectedRouter.POST("/:id/approve", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.ApprovePostHandler(appCtx))
 		postProtectedRouter.POST("/:id/block", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.BlockPostHandler(appCtx))
 		postProtectedRouter.POST("/:id/unblock", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.UnblockPostHandler(appCtx))
+		postProtectedRouter.GET("/pending", middlewares.RequireRoles(common.Administrator, common.Moderator))
+	}
+
+	currentUserRouter := group.Group("/me", middlewares.Authorize(appCtx))
+	{
+		currentUserRouter.GET("/saved-posts")
+		currentUserRouter.POST("/saved-posts/:postId")
+		currentUserRouter.DELETE("/saved-posts/:postId")
+		currentUserRouter.DELETE("/saved-posts")
+		// Pending posts
+		currentUserRouter.GET("/pending-posts")
+		// Approved posts (posted posts)
+		currentUserRouter.GET("/approved-posts")
 	}
 }

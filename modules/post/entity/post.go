@@ -22,7 +22,7 @@ type Post struct {
 	common.MongoTimestamps `bson:",inline" json:",inline"`
 	Title                  string               `bson:"title" json:"title"`
 	Content                string               `bson:"content" json:"content"`
-	Images                 []string             `bson:"images,omitempty" json:"images,omitempty"`
+	Images                 []string             `bson:"images" json:"images"`
 	AuthorId               *primitive.ObjectID  `bson:"author_id" json:"-"`
 	TopicId                *primitive.ObjectID  `bson:"topic_id" json:"-"`
 	TagIds                 []primitive.ObjectID `bson:"tag_ids" json:"-"`
@@ -41,6 +41,10 @@ type Post struct {
 }
 
 func NewPost(data *PostCreate) *Post {
+	if data.Images == nil {
+		data.Images = []string{}
+	}
+
 	topicObjectId, _ := primitive.ObjectIDFromHex(data.TopicId)
 	tagObjectIds := make([]primitive.ObjectID, len(data.TagIds))
 	for i, tagId := range data.TagIds {

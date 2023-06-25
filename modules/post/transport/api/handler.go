@@ -21,6 +21,7 @@ type PostBusiness interface {
 	ApprovePostById(ctx context.Context, postId *string, user *common.Requester) (*entity.Post, error)
 	BlockPost(ctx context.Context, postId *string, user *common.Requester) (*entity.Post, error)
 	UnblockPost(ctx context.Context, postId *string, user *common.Requester) (*entity.Post, error)
+	GetPendingPosts(ctx context.Context, pagination *common.Pagination) ([]entity.Post, *common.PaginationInformation, error)
 }
 
 type postHandler struct {
