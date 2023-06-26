@@ -25,6 +25,7 @@ type UserRepository interface {
 
 type TopicRepository interface {
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity3.Topic, error)
+	Find1(ctx context.Context, filter map[string]interface{}) ([]entity3.Topic, error)
 }
 
 type TagRepository interface {

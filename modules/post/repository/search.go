@@ -16,7 +16,7 @@ func (repo *postRepository) Search(
 	opts := options.Find()
 	// Pagination
 	if pagination != nil {
-		opts.SetLimit(int64(*pagination.Limit)).SetSkip(int64((*pagination.Page - 1) * (*pagination.Limit)))
+		opts.SetLimit(int64(pagination.Limit)).SetSkip(int64((pagination.Page - 1) * (pagination.Limit)))
 	}
 
 	// Text search

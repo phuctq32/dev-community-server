@@ -12,11 +12,11 @@ func (biz *postBusiness) SearchPosts(ctx context.Context, searchTerm *string, pa
 	*searchTerm = common.RemoveVietnameseAccent(*searchTerm)
 
 	if pagination != nil {
-		if *pagination.Limit < 0 {
-			*pagination.Limit = common.DefaultPage
+		if pagination.Limit < 0 {
+			pagination.Limit = common.DefaultPage
 		}
-		if *pagination.Page < 1 {
-			*pagination.Page = common.DefaultPage
+		if pagination.Page < 1 {
+			pagination.Page = common.DefaultPage
 		}
 	}
 
@@ -37,13 +37,13 @@ func (biz *postBusiness) SearchPosts(ctx context.Context, searchTerm *string, pa
 
 	var paginationInfo *common.PaginationInformation
 	if pagination != nil {
-		totalPage := *totalPostCount / (*pagination.Limit)
-		if *totalPostCount%*pagination.Limit > 0 {
+		totalPage := *totalPostCount / (pagination.Limit)
+		if *totalPostCount%pagination.Limit > 0 {
 			totalPage++
 		}
 		paginationInfo = &common.PaginationInformation{
-			PerPage:   pagination.Limit,
-			Page:      pagination.Page,
+			PerPage:   &pagination.Limit,
+			Page:      &pagination.Page,
 			TotalPage: &totalPage,
 		}
 	}

@@ -8,8 +8,14 @@ type Filter struct {
 }
 
 type Pagination struct {
-	Limit *int
-	Page  *int
+	Limit int
+	Page  int
+}
+
+type PaginationInformation struct {
+	PerPage   *int `json:"per_page,omitempty"`
+	Page      *int `json:"page,omitempty"`
+	TotalPage *int `json:"total_page,omitempty"`
 }
 
 const (
@@ -17,8 +23,4 @@ const (
 	DefaultPage  int = 1
 )
 
-type PaginationInformation struct {
-	PerPage   *int `json:"per_page,omitempty"`
-	Page      *int `json:"page,omitempty"`
-	TotalPage *int `json:"total_page,omitempty"`
-}
+var DefaultPagination *Pagination = &Pagination{Limit: DefaultLimit, Page: DefaultPage}
