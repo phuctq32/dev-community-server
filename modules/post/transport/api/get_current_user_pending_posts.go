@@ -6,12 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
-func (hdl *postHandler) SearchPost(appCtx appctx.AppContext) gin.HandlerFunc {
+func (hdl *postHandler) GetCurrentUserPendingPosts(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var pagination *common.Pagination
+		pagination := common.DefaultPagination
 		limit, gotLimit := c.GetQuery("limit")
 		page, gotPage := c.GetQuery("page")
 		if gotLimit && gotPage {
@@ -24,22 +23,16 @@ func (hdl *postHandler) SearchPost(appCtx appctx.AppContext) gin.HandlerFunc {
 				panic(err)
 			}
 
-			pagination = &common.Pagination{
-				Limit: intLimit,
-				Page:  intPage,
-			}
+			pagination.Limit = intLimit
+			pagination.Page = intPage
 		}
 
-		searchTerm := ""
-		if search, ok := c.GetQuery("q"); ok {
-			searchTerm = strings.TrimSpace(search)
-		}
+		requester := c.MustGet(common.ReqUser).(common.Requester)
 
-		posts, paginationInfo, err := hdl.business.SearchPosts(c.Request.Context(), &searchTerm, pagination)
+		posts, paginationInfo, err := hdl.business.GetPendingPosts(c.Request.Context(), pagination, &requester)
 		if err != nil {
 			panic(err)
 		}
-
 		postCount := len(posts)
 
 		c.JSON(http.StatusOK, common.NewFullResponse("", posts, &postCount, paginationInfo))

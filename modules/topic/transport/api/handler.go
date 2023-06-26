@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"dev_community_server/common"
 	"dev_community_server/components/appctx"
 	"dev_community_server/modules/topic/business"
 	"dev_community_server/modules/topic/entity"
@@ -11,7 +10,7 @@ import (
 
 type TopicBusiness interface {
 	CreateTopic(ctx context.Context, data *entity.TopicCreate) (*entity.Topic, error)
-	GetTopics(ctx context.Context, filter common.Filter) ([]entity.Topic, error)
+	GetTopics(ctx context.Context, filter map[string]interface{}) ([]entity.Topic, error)
 	GetTopicById(ctx context.Context, id string) (*entity.Topic, error)
 }
 

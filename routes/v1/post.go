@@ -15,7 +15,7 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 	{
 		postRouter.GET("", postHandler.GetPosts(appCtx))
 		postRouter.GET("/:id", postHandler.GetPostById(appCtx))
-		postRouter.GET("/search", postHandler.SearchPost(appCtx))
+		postRouter.GET("/search", postHandler.SearchPosts(appCtx))
 	}
 
 	postProtectedRouter := postRouter.Use(middlewares.Authorize(appCtx))
@@ -37,7 +37,7 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 		currentUserRouter.DELETE("/saved-posts/:postId")
 		currentUserRouter.DELETE("/saved-posts")
 		// Pending posts
-		currentUserRouter.GET("/pending-posts")
+		currentUserRouter.GET("/pending-posts", postHandler.GetCurrentUserPendingPosts(appCtx))
 		// Approved posts (posted posts)
 		currentUserRouter.GET("/approved-posts")
 	}

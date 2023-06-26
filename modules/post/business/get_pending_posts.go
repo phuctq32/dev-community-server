@@ -7,17 +7,13 @@ import (
 )
 
 func (biz *postBusiness) GetPendingPosts(ctx context.Context, pagination *common.Pagination, user *common.Requester) ([]entity.Post, *common.PaginationInformation, error) {
-	if pagination == nil {
-		pagination = &common.Pagination{}
-		pagination.Limit = common.DefaultLimit
-		pagination.Page = common.DefaultPage
-	}
-
 	// Get pending posts
 	filter := map[string]interface{}{"status": entity.Pending}
-	// Admin: All pending posts, Moderator: Pending posts of topic which he manages
+
+	// Admin: All pending posts
+	// Moderator: Pending posts of topic which he manages
 	if (*user).GetRoleType() == common.Moderator {
-		managedTopics, err := biz.topicRepo.Find1(ctx, map[string]interface{}{"moderator_ids": (*user).GetUserId()})
+		managedTopics, err := biz.topicRepo.Find(ctx, map[string]interface{}{"moderator_ids": (*user).GetUserId()})
 		if err != nil {
 			return nil, nil, err
 		}
