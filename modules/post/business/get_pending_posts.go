@@ -8,7 +8,7 @@ import (
 
 func (biz *postBusiness) GetPendingPosts(ctx context.Context, pagination *common.Pagination, user *common.Requester) ([]entity.Post, *common.PaginationInformation, error) {
 	// Get pending posts
-	filter := map[string]interface{}{"status": entity.Pending}
+	postFilter := map[string]interface{}{"status": entity.Pending}
 
 	// Admin: All pending posts
 	// Moderator: Pending posts of topic which he manages
@@ -20,17 +20,17 @@ func (biz *postBusiness) GetPendingPosts(ctx context.Context, pagination *common
 		if len(managedTopics) > 0 {
 			topicIds := make([]string, len(managedTopics))
 			for _, topic := range managedTopics {
-				topicIds = append(topicIds, topic.Id.Hex())
+				topicIds = append(topicIds, *topic.Id)
 			}
-			filter["topic_id"] = topicIds
+			_ = common.AppendInListIdQuery(postFilter, "topic_id", topicIds)
 		}
 	}
 
-	posts, err := biz.postRepo.Find(ctx, filter, pagination)
+	posts, err := biz.postRepo.Find(ctx, postFilter, pagination)
 	if err != nil {
 		return nil, nil, err
 	}
-	totalPostCount, err := biz.postRepo.Count(ctx, filter)
+	totalPostCount, err := biz.postRepo.Count(ctx, postFilter)
 	if err != nil {
 		return nil, nil, err
 	}

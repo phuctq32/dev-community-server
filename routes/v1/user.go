@@ -21,6 +21,5 @@ func NewUserRoutes(appCtx appctx.AppContext, v *gin.RouterGroup) {
 	userRouter := v.Group("/users")
 	{
 		userRouter.GET("/:id", userHandler.GetUserById(appCtx))
-		userRouter.GET("/posts/:userId", userHandler.GetPostsByUserId(appCtx))
 	}
 }

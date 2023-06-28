@@ -21,6 +21,7 @@ type PostRepository interface {
 
 type UserRepository interface {
 	FindOne(ctx context.Context, filter map[string]interface{}) (*userEntity.User, error)
+	Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*userEntity.User, error)
 }
 
 type TopicRepository interface {

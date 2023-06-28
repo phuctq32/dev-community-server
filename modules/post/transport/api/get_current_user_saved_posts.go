@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-func (hdl *postHandler) GetCurrentUserPendingPosts(appCtx appctx.AppContext) gin.HandlerFunc {
+func (hdl *postHandler) GetCurrentUserSavedPosts(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		pagination := common.DefaultPagination
 		limit, gotLimit := c.GetQuery("limit")

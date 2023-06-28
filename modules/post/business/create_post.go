@@ -14,7 +14,11 @@ func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate
 	} else {
 		data.Status = entity.Pending
 	}
-	topic, err := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": data.TopicId})
+	topicFilter := map[string]interface{}{}
+	if err := common.AppendIdQuery(topicFilter, "id", data.TopicId); err != nil {
+		return nil, err
+	}
+	topic, err := biz.topicRepo.FindOne(ctx, topicFilter)
 	if err != nil {
 		return nil, err
 	}
@@ -26,17 +30,19 @@ func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate
 
 	data.TagIds = make([]string, len(data.TagNames))
 	for i, tagName := range data.TagNames {
-		tag, err := biz.tagRepo.FindOne(ctx, map[string]interface{}{"name": tagName, "topic_id": topic.Id})
+		tagFilter := map[string]interface{}{"name": tagName}
+		_ = common.AppendIdQuery(tagFilter, "topic_id", *topic.Id)
+		tag, err := biz.tagRepo.FindOne(ctx, tagFilter)
 		if err != nil {
 			return nil, err
 		}
 		if tag == nil {
-			tag, err = biz.tagRepo.Create(ctx, &entity2.TagCreate{Name: tagName, TopicId: topic.Id.Hex()})
+			tag, err = biz.tagRepo.Create(ctx, &entity2.TagCreate{Name: tagName, TopicId: *topic.Id})
 			if err != nil {
 				return nil, err
 			}
 		}
-		tagId := tag.Id.Hex()
+		tagId := *tag.Id
 		data.TagIds[i] = tagId
 
 		tags[i] = *tag

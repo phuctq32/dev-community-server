@@ -13,7 +13,7 @@ import (
 type UserRepository interface {
 	FindOne(ctx context.Context, filter map[string]interface{}) (*userEntity.User, error)
 	Create(ctx context.Context, data *userEntity.UserCreate) error
-	Update(ctx context.Context, id string, data map[string]interface{}) error
+	Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*userEntity.User, error)
 }
 
 type RoleRepository interface {

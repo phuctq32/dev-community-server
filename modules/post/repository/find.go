@@ -21,17 +21,6 @@ func (repo *postRepository) Find(
 		opts.SetLimit(int64(pagination.Limit)).SetSkip(int64((pagination.Page - 1) * (pagination.Limit)))
 	}
 
-	// topic filter & tags
-	if err := common.ConvertFieldToObjectId(filter, map[string]string{"topic_id": "topic_id", "tag_ids": "tag_ids"}); err != nil {
-		return nil, common.NewServerError(err)
-	}
-	if topicIds, ok := filter["topic_id"]; ok {
-		filter["topic_id"] = bson.M{"$in": topicIds}
-	}
-	if tagIds, ok := filter["tag_ids"]; ok {
-		filter["tag_ids"] = bson.M{"$in": tagIds}
-	}
-
 	cursor, err := repo.postColl.Find(ctx, filter, opts)
 	if err != nil {
 		return nil, err

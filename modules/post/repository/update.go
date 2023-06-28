@@ -9,11 +9,11 @@ import (
 )
 
 func (repo *postRepository) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*entity.Post, error) {
-	if err := common.ConvertFieldToObjectId(filter, map[string]string{"id": "_id"}); err != nil {
-		return nil, err
+	if err := common.BsonMap(data).ToObjectId("topic_id"); err != nil {
+		return nil, common.NewServerError(err)
 	}
-	if err := common.ConvertFieldToObjectId(data, map[string]string{"topic_id": "topic_id", "tag_ids": "tag_ids"}); err != nil {
-		return nil, err
+	if err := common.BsonMap(data).ToListObjectId("tag_ids"); err != nil {
+		return nil, common.NewServerError(err)
 	}
 
 	var post entity.Post

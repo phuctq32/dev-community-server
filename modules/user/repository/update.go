@@ -3,36 +3,28 @@ package repository
 import (
 	"context"
 	"dev_community_server/common"
-	userEntity "dev_community_server/modules/user/entity"
+	"dev_community_server/modules/user/entity"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (repo *userRepository) Update(ctx context.Context, id string, data map[string]interface{}) error {
-	objId, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return common.NewServerError(err)
+func (repo *userRepository) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*entity.User, error) {
+	if err := common.BsonMap(data).ToObjectId("role_id"); err != nil {
+		return nil, common.NewServerError(err)
+	}
+	if err := common.BsonMap(data).ToListObjectId("saved_post_ids"); err != nil {
+		return nil, common.NewServerError(err)
 	}
 
-	var existingUser userEntity.User
-
-	if err = repo.userColl.FindOne(ctx, bson.M{"_id": objId}).Decode(&existingUser); err != nil {
-		if err == mongo.ErrNoDocuments {
-			return common.NewNotFoundError("user", err)
-		}
-
-		return err
-	}
-
-	if _, err = repo.userColl.UpdateByID(ctx, objId, bson.M{
+	var updatedUser entity.User
+	if err := repo.userColl.FindOneAndUpdate(ctx, filter, bson.M{
 		"$set": data,
 		"$currentDate": bson.M{
 			"updated_at": bson.M{"$type": "date"},
 		},
-	}); err != nil {
-		return err
+	}, options.FindOneAndUpdate().SetReturnDocument(1)).Decode(&updatedUser); err != nil {
+		return nil, common.NewServerError(err)
 	}
 
-	return nil
+	return &updatedUser, nil
 }

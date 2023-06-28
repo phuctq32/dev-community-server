@@ -23,6 +23,7 @@ type PostBusiness interface {
 	UnblockPost(ctx context.Context, postId *string, user *common.Requester) (*entity.Post, error)
 	GetPendingPosts(ctx context.Context, pagination *common.Pagination, user *common.Requester) ([]entity.Post, *common.PaginationInformation, error)
 	GetCurrentUserPendingPosts(ctx context.Context, pagination *common.Pagination, user *common.Requester) ([]entity.Post, *common.PaginationInformation, error)
+	GetCurrentUserSavedPosts(ctx context.Context, pagination *common.Pagination, user *common.Requester) ([]entity.Post, *common.PaginationInformation, error)
 }
 
 type postHandler struct {

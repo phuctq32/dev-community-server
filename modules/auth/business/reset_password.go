@@ -21,9 +21,15 @@ func (biz *authBusiness) ResetPassword(ctx context.Context, resetToken, newPassw
 		return common.NewServerError(errors.New("Hash not success"))
 	}
 
-	err = biz.userRepo.Update(ctx, user.Id.Hex(), map[string]interface{}{
+	filter := map[string]interface{}{}
+	if err = common.AppendIdQuery(filter, "id", *user.Id); err != nil {
+		return err
+	}
+	if _, err = biz.userRepo.Update(ctx, filter, map[string]interface{}{
 		"password":    hashedPassword,
 		"reset_token": nil,
-	})
+	}); err != nil {
+		return err
+	}
 	return nil
 }

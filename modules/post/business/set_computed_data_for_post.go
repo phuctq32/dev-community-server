@@ -35,7 +35,9 @@ func (biz *postBusiness) SetComputedData(ctx context.Context, post *entity.Post)
 }
 
 func (biz *postBusiness) SetAuthorData(ctx context.Context, post *entity.Post) error {
-	author, err := biz.userRepo.FindOne(ctx, map[string]interface{}{"id": post.AuthorId.Hex()})
+	userFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(userFilter, "id", post.AuthorId)
+	author, err := biz.userRepo.FindOne(ctx, userFilter)
 	if err != nil {
 		return err
 	}
@@ -47,7 +49,9 @@ func (biz *postBusiness) SetAuthorData(ctx context.Context, post *entity.Post) e
 }
 
 func (biz *postBusiness) SetTopicData(ctx context.Context, post *entity.Post) error {
-	topic, err := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": post.TopicId.Hex()})
+	topicFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(topicFilter, "id", post.TopicId)
+	topic, err := biz.topicRepo.FindOne(ctx, topicFilter)
 	if err != nil {
 		return err
 	}
@@ -61,7 +65,9 @@ func (biz *postBusiness) SetTopicData(ctx context.Context, post *entity.Post) er
 func (biz *postBusiness) SetTagsData(ctx context.Context, post *entity.Post) error {
 	post.Tags = make([]entity2.Tag, len(post.TagIds))
 	for j, id := range post.TagIds {
-		tag, err := biz.tagRepo.FindOne(ctx, map[string]interface{}{"id": id.Hex()})
+		tagFilter := map[string]interface{}{}
+		_ = common.AppendIdQuery(tagFilter, "id", id)
+		tag, err := biz.tagRepo.FindOne(ctx, tagFilter)
 		if err != nil {
 			return err
 		}

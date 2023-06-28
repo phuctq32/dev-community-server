@@ -13,7 +13,7 @@ func (repo *commentRepository) Create(ctx context.Context, data *entity.CommentC
 	if err != nil {
 		return nil, err
 	}
-	comment.Id = result.InsertedID.(primitive.ObjectID)
+	*comment.Id = result.InsertedID.(primitive.ObjectID).Hex()
 
 	return comment, nil
 }

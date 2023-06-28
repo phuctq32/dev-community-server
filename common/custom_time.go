@@ -19,6 +19,6 @@ func (d *Date) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (d Date) MarshalJSON() ([]byte, error) {
-	return json.Marshal(time.Time(d))
+func (d *Date) MarshalJSON() ([]byte, error) {
+	return json.Marshal(time.Time(*d))
 }

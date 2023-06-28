@@ -7,22 +7,24 @@ import (
 	"time"
 )
 
-func (biz *userBusiness) UpdateUser(ctx context.Context, id string, updatingUser *entity.UserUpdate) error {
-	data, err := common.StructToMap(updatingUser)
+func (biz *userBusiness) UpdateUser(ctx context.Context, id string, data *entity.UserUpdate) (*entity.User, error) {
+	updatedData, err := common.StructToMap(data)
 	if err != nil {
-		return common.NewServerError(err)
+		return nil, common.NewServerError(err)
 	}
 
-	//if val, ok := data["birthday"]; ok {
-	//	data["birthday"] = time.Time(val.(common.Date))
-	//}
-	if updatingUser.Birthday != nil {
-		data["birthday"] = time.Time(*updatingUser.Birthday)
+	if data.Birthday != nil {
+		updatedData["birthday"] = time.Time(*data.Birthday)
 	}
 
-	if err = biz.userRepo.Update(ctx, id, data); err != nil {
-		return err
+	filter := map[string]interface{}{}
+	if err = common.AppendIdQuery(filter, "id", id); err != nil {
+		return nil, common.NewServerError(err)
+	}
+	user, err := biz.userRepo.Update(ctx, filter, updatedData)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	return user, nil
 }

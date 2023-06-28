@@ -7,7 +7,11 @@ import (
 )
 
 func (biz *userBusiness) ChangePassword(ctx context.Context, id string, userChangePw *entity.UserChangePassword) error {
-	user, err := biz.userRepo.FindOne(ctx, map[string]interface{}{"id": id})
+	filter := map[string]interface{}{}
+	if err := common.AppendIdQuery(filter, "id", id); err != nil {
+		return err
+	}
+	user, err := biz.userRepo.FindOne(ctx, filter)
 	if err != nil {
 		return err
 	}
@@ -29,7 +33,7 @@ func (biz *userBusiness) ChangePassword(ctx context.Context, id string, userChan
 		return err
 	}
 
-	if err = biz.userRepo.Update(ctx, id, map[string]interface{}{"password": hashedPassword}); err != nil {
+	if _, err = biz.userRepo.Update(ctx, filter, map[string]interface{}{"password": hashedPassword}); err != nil {
 		return err
 	}
 

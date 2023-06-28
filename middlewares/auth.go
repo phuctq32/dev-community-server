@@ -29,11 +29,16 @@ func Authorize(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		user, err := userRepo.FindOne(c.Request.Context(), map[string]interface{}{"id": payload.UserId})
+		userFilter := map[string]interface{}{}
+		_ = common.AppendIdQuery(userFilter, "id", payload.UserId)
+		user, err := userRepo.FindOne(c.Request.Context(), userFilter)
 		if err != nil {
 			panic(err)
 		}
-		role, err := roleRepo.FindOne(c.Request.Context(), map[string]interface{}{"id": user.RoleId.Hex()})
+
+		roleFilter := map[string]interface{}{}
+		_ = common.AppendIdQuery(userFilter, "id", user.RoleId)
+		role, err := roleRepo.FindOne(c.Request.Context(), roleFilter)
 		if err != nil {
 			panic(err)
 		}

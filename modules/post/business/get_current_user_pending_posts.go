@@ -13,10 +13,8 @@ func (biz *postBusiness) GetCurrentUserPendingPosts(ctx context.Context, paginat
 	}
 
 	// Get pending posts have author is requester (just Member, because Admin or Mod's posts automatically approved)
-	filter := map[string]interface{}{
-		"author_id": (*user).GetUserId(),
-		"status":    entity.Pending,
-	}
+	filter := map[string]interface{}{"status": entity.Pending}
+	_ = common.AppendIdQuery(filter, "author_id", (*user).GetUserId())
 
 	posts, err := biz.postRepo.Find(ctx, filter, pagination)
 	if err != nil {
@@ -28,7 +26,7 @@ func (biz *postBusiness) GetCurrentUserPendingPosts(ctx context.Context, paginat
 	}
 
 	for i := range posts {
-		if err := biz.SetComputedData(ctx, &posts[i]); err != nil {
+		if err = biz.SetComputedData(ctx, &posts[i]); err != nil {
 			return nil, nil, err
 		}
 	}

@@ -53,7 +53,7 @@ func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCrea
 	if err != nil {
 		return err
 	}
-	data.RoleId = role.Id
+	data.RoleId = *role.Id
 
 	if err = biz.userRepo.Create(ctx, data); err != nil {
 		return err

@@ -26,7 +26,7 @@ func (biz *postBusiness) GetPosts(ctx context.Context, filter map[string]interfa
 	}
 
 	for i := range posts {
-		if err := biz.SetComputedData(ctx, &posts[i]); err != nil {
+		if err = biz.SetComputedData(ctx, &posts[i]); err != nil {
 			return nil, nil, err
 		}
 	}

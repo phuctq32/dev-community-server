@@ -23,17 +23,23 @@ func (biz *authBusiness) ForgotPassword(ctx context.Context, email string) error
 	}
 
 	b := make([]byte, 32)
-	if _, err := rand.Read(b); err != nil {
+	if _, err = rand.Read(b); err != nil {
 		return err
 	}
 	resetCode := hex.EncodeToString(b)
 
-	err = biz.userRepo.Update(ctx, user.Id.Hex(), map[string]interface{}{
+	filter := map[string]interface{}{}
+	if err = common.AppendIdQuery(filter, "id", *user.Id); err != nil {
+		return err
+	}
+	if _, err = biz.userRepo.Update(ctx, filter, map[string]interface{}{
 		"reset_token": &entity.Token{
 			Token:     resetCode,
 			ExpiredAt: time.Now().Add(time.Duration(time.Hour)),
 		},
-	})
+	}); err != nil {
+		return err
+	}
 
 	mailConfig := mailer.NewEmailConfigWithDynamicTemplate(
 		*biz.appCtx.GetSendGridConfig().GetEmailFrom(),

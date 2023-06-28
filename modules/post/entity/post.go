@@ -6,8 +6,7 @@ import (
 	entity3 "dev_community_server/modules/tag/entity"
 	entity2 "dev_community_server/modules/topic/entity"
 	userEntity "dev_community_server/modules/user/entity"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"time"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type PostStatus uint8
@@ -20,17 +19,17 @@ const (
 type Post struct {
 	common.MongoId         `bson:",inline" json:",inline"`
 	common.MongoTimestamps `bson:",inline" json:",inline"`
-	Title                  string               `bson:"title" json:"title"`
-	Content                string               `bson:"content" json:"content"`
-	Images                 []string             `bson:"images" json:"images"`
-	AuthorId               *primitive.ObjectID  `bson:"author_id" json:"-"`
-	TopicId                *primitive.ObjectID  `bson:"topic_id" json:"-"`
-	TagIds                 []primitive.ObjectID `bson:"tag_ids" json:"-"`
-	Status                 PostStatus           `bson:"status" json:"status"`
-	UpVotes                []primitive.ObjectID `bson:"up_votes" json:"up_votes"`
-	DownVotes              []primitive.ObjectID `bson:"down_votes" json:"down_votes"`
-	ViewCount              int                  `bson:"view_count" json:"view_count"`
-	IsBlocked              bool                 `bson:"is_blocked" json:"is_blocked"`
+	Title                  string     `bson:"title" json:"title"`
+	Content                string     `bson:"content" json:"content"`
+	Images                 []string   `bson:"images" json:"images"`
+	AuthorId               string     `bson:"author_id" json:"-"`
+	TopicId                string     `bson:"topic_id" json:"-"`
+	TagIds                 []string   `bson:"tag_ids" json:"-"`
+	Status                 PostStatus `bson:"status" json:"status"`
+	UpVotes                []string   `bson:"up_votes" json:"up_votes"`
+	DownVotes              []string   `bson:"down_votes" json:"down_votes"`
+	ViewCount              int        `bson:"view_count" json:"view_count"`
+	IsBlocked              bool       `bson:"is_blocked" json:"is_blocked"`
 	// Computed fields
 	Score        int              `bson:"-" json:"score"`
 	Author       *userEntity.User `bson:"-" json:"author,omitempty"`
@@ -40,40 +39,27 @@ type Post struct {
 	Comments     []entity.Comment `bson:"-" json:"comments,omitempty"` // Not include replies
 }
 
-func NewPost(data *PostCreate) *Post {
-	if data.Images == nil {
-		data.Images = []string{}
+func (*Post) CollectionName() string { return "posts" }
+
+func (post *Post) MarshalBSON() ([]byte, error) {
+	dataBytes, _ := bson.Marshal(post)
+
+	var bm common.BsonMap
+	if err := bson.Unmarshal(dataBytes, &bm); err != nil {
+		return nil, err
 	}
 
-	topicObjectId, _ := primitive.ObjectIDFromHex(data.TopicId)
-	tagObjectIds := make([]primitive.ObjectID, len(data.TagIds))
-	for i, tagId := range data.TagIds {
-		tagObjectId, _ := primitive.ObjectIDFromHex(tagId)
-		tagObjectIds[i] = tagObjectId
+	if err := bm.ToObjectId("author_id"); err != nil {
+		return nil, err
 	}
-	now := time.Now()
-	//emptyArrayComments := make([]entity.Comment, 0)
-	return &Post{
-		MongoTimestamps: common.MongoTimestamps{
-			CreatedAt: &now,
-			UpdatedAt: &now,
-		},
-		Title:     data.Title,
-		Content:   data.Content,
-		AuthorId:  &data.Author.Id,
-		Images:    data.Images,
-		TopicId:   &topicObjectId,
-		TagIds:    tagObjectIds,
-		Status:    data.Status,
-		UpVotes:   []primitive.ObjectID{},
-		DownVotes: []primitive.ObjectID{},
-		ViewCount: 0,
-		IsBlocked: false,
-		// Init computed fields
-		Score:        0,
-		Author:       data.Author,
-		Tags:         []entity3.Tag{},
-		CommentCount: 0,
-		Comments:     []entity.Comment{},
+
+	if err := bm.ToObjectId("topic_id"); err != nil {
+		return nil, err
 	}
+
+	if err := bm.ToListObjectId("tag_ids"); err != nil {
+		return nil, err
+	}
+
+	return bson.Marshal(bm)
 }

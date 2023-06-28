@@ -8,13 +8,15 @@ import (
 )
 
 func (repo *topicRepository) Create(ctx context.Context, data *entity.TopicCreate) (*entity.Topic, error) {
-	topic := entity.NewTopic(data)
-
-	result, err := repo.topicColl.InsertOne(ctx, topic)
+	topic := &entity.Topic{
+		Name:        data.Name,
+		Description: data.Description,
+	}
+	result, err := repo.topicColl.InsertOne(ctx, data)
 	if err != nil {
 		return nil, common.NewServerError(err)
 	}
-	topic.Id = result.InsertedID.(primitive.ObjectID)
+	*topic.Id = result.InsertedID.(primitive.ObjectID).Hex()
 
 	return topic, nil
 }

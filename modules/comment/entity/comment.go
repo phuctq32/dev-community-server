@@ -31,11 +31,10 @@ func NewComment(data *CommentCreate) *Comment {
 		panic(err)
 	}
 
-	now := time.Now()
 	return &Comment{
 		MongoTimestamps: common.MongoTimestamps{
-			CreatedAt: &now,
-			UpdatedAt: &now,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
 		},
 		Content:               *data.Content,
 		Score:                 0,

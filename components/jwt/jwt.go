@@ -1,13 +1,14 @@
 package jwt
 
 import (
+	"dev_community_server/common"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
 
 type Payload struct {
-	UserId string
-	//Role   string
+	UserId   string
+	RoleType common.RoleType
 }
 
 type myClaims struct {

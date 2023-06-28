@@ -7,7 +7,11 @@ import (
 )
 
 func (biz *postBusiness) GetPostById(ctx context.Context, id *string) (*entity.Post, error) {
-	post, err := biz.postRepo.FindOne(ctx, map[string]interface{}{"id": *id})
+	filter := map[string]interface{}{}
+	if err := common.AppendIdQuery(filter, "id", *id); err != nil {
+		return nil, err
+	}
+	post, err := biz.postRepo.FindOne(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

@@ -17,15 +17,19 @@ func (biz *postBusiness) UpdatePost(ctx context.Context, data *entity.PostUpdate
 	}
 
 	// Check if user is post's author
-	if post.AuthorId.Hex() != data.Author.Id.Hex() {
+	if post.AuthorId != *data.Author.Id {
 		return nil, common.NewCustomBadRequestError("User is not author")
 	}
 
 	// Get current post's topic
-	topic, _ := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": post.TopicId.Hex()})
+	topicFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(topicFilter, "id", post.TopicId)
+	topic, _ := biz.topicRepo.FindOne(ctx, topicFilter)
 	// Find topic if data.TopicId exists
 	if data.TopicId != nil {
-		existingTopic, err := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": *data.TopicId})
+		existingTopicFilter := map[string]interface{}{}
+		_ = common.AppendIdQuery(existingTopicFilter, "id", *data.TopicId)
+		existingTopic, err := biz.topicRepo.FindOne(ctx, existingTopicFilter)
 		if err != nil {
 			return nil, err
 		}
@@ -41,17 +45,19 @@ func (biz *postBusiness) UpdatePost(ctx context.Context, data *entity.PostUpdate
 	if len(data.TagNames) > 0 {
 		data.TagIds = make([]string, len(data.TagNames))
 		for i, tagName := range data.TagNames {
-			tag, err := biz.tagRepo.FindOne(ctx, map[string]interface{}{"name": tagName, "topic_id": topic.Id})
+			tagFilter := map[string]interface{}{"name": tagName}
+			_ = common.AppendIdQuery(tagFilter, "topic_id", *topic.Id)
+			tag, err := biz.tagRepo.FindOne(ctx, tagFilter)
 			if err != nil {
 				return nil, err
 			}
 			if tag == nil {
-				tag, err = biz.tagRepo.Create(ctx, &entity2.TagCreate{Name: tagName, TopicId: topic.Id.Hex()})
+				tag, err = biz.tagRepo.Create(ctx, &entity2.TagCreate{Name: tagName, TopicId: *topic.Id})
 				if err != nil {
 					return nil, err
 				}
 			}
-			data.TagIds[i] = tag.Id.Hex()
+			data.TagIds[i] = *tag.Id
 		}
 	}
 
@@ -68,7 +74,9 @@ func (biz *postBusiness) UpdatePost(ctx context.Context, data *entity.PostUpdate
 
 	updatedPost.Tags = make([]entity2.Tag, len(updatedPost.TagIds))
 	for i, id := range updatedPost.TagIds {
-		tag, _ := biz.tagRepo.FindOne(ctx, map[string]interface{}{"id": id.Hex()})
+		tagFilter := map[string]interface{}{}
+		_ = common.AppendIdQuery(tagFilter, "id", id)
+		tag, _ := biz.tagRepo.FindOne(ctx, tagFilter)
 		updatedPost.Tags[i] = *tag
 	}
 

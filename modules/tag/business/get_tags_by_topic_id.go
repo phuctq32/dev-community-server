@@ -7,7 +7,11 @@ import (
 )
 
 func (biz *tagBusiness) GetTagsByTopicId(ctx context.Context, topicId string) ([]entity.Tag, error) {
-	topic, err := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": topicId})
+	topicFilter := map[string]interface{}{}
+	if err := common.AppendIdQuery(topicFilter, "id", topicId); err != nil {
+		return nil, err
+	}
+	topic, err := biz.topicRepo.FindOne(ctx, topicFilter)
 	if err != nil {
 		return nil, err
 	}
@@ -16,7 +20,9 @@ func (biz *tagBusiness) GetTagsByTopicId(ctx context.Context, topicId string) ([
 		return nil, common.NewNotFoundError("Topic", common.ErrNotFound)
 	}
 
-	tags, err := biz.tagRepo.Find(ctx, map[string]interface{}{"topic_id": topicId})
+	tagFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(tagFilter, "topic_id", topicId)
+	tags, err := biz.tagRepo.Find(ctx, tagFilter)
 	if err != nil {
 		return nil, err
 	}

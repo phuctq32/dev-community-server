@@ -7,7 +7,11 @@ import (
 )
 
 func (biz *topicBusiness) GetTopicById(ctx context.Context, id string) (*entity.Topic, error) {
-	topic, err := biz.repo.FindOne(ctx, map[string]interface{}{"id": id})
+	filter := map[string]interface{}{}
+	if err := common.AppendIdQuery(filter, "id", id); err != nil {
+		return nil, err
+	}
+	topic, err := biz.repo.FindOne(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

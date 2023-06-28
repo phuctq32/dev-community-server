@@ -2,6 +2,7 @@ package entity
 
 import (
 	"dev_community_server/common"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type Role struct {
@@ -10,8 +11,8 @@ type Role struct {
 	Type           common.RoleType `bson:"type" json:"-"`
 }
 
-func NewRole(role *RoleCreate) *Role {
-	return &Role{
-		Name: role.Name,
-	}
+func (*Role) CollectionName() string { return "roles" }
+
+func (role *Role) MarshalBSON() ([]byte, error) {
+	return bson.Marshal(role)
 }

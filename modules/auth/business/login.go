@@ -26,7 +26,7 @@ func (biz *authBusiness) Login(ctx context.Context, data *entity.UserLogin) (*st
 		return nil, nil, common.NewCustomBadRequestError("User not verified")
 	}
 
-	tokenPayload := jwt.Payload{UserId: user.Id.Hex()}
+	tokenPayload := jwt.Payload{UserId: *user.Id}
 	tokenStr, err := biz.jwtProvider.GenerateAccessToken(tokenPayload, biz.jwtExpiry)
 	if err != nil {
 		return nil, nil, err

@@ -20,7 +20,11 @@ func (biz *authBusiness) VerifyEmail(ctx context.Context, verifyToken string) er
 		return common.NewCustomBadRequestError("Verification token expired")
 	}
 
-	if err = biz.userRepo.Update(ctx, user.Id.Hex(), map[string]interface{}{
+	filter := map[string]interface{}{}
+	if err = common.AppendIdQuery(filter, "id", *user.Id); err != nil {
+		return err
+	}
+	if _, err = biz.userRepo.Update(ctx, filter, map[string]interface{}{
 		"is_verified":    true,
 		"verified_token": nil,
 	}); err != nil {

@@ -8,7 +8,11 @@ import (
 )
 
 func (biz *postBusiness) ApprovePostById(ctx context.Context, postId *string, user *common.Requester) (*entity.Post, error) {
-	post, err := biz.postRepo.FindOne(ctx, map[string]interface{}{"id": *postId})
+	postFilter := map[string]interface{}{}
+	if err := common.AppendIdQuery(postFilter, "id", *postId); err != nil {
+		return nil, err
+	}
+	post, err := biz.postRepo.FindOne(ctx, postFilter)
 	if err != nil {
 		return nil, err
 	}
@@ -16,14 +20,16 @@ func (biz *postBusiness) ApprovePostById(ctx context.Context, postId *string, us
 		return nil, common.NewNotFoundError("Post", common.ErrNotFound)
 	}
 
-	topic, _ := biz.topicRepo.FindOne(ctx, map[string]interface{}{"id": post.TopicId.Hex()})
+	topicFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(topicFilter, "id", post.TopicId)
+	topic, _ := biz.topicRepo.FindOne(ctx, topicFilter)
 
 	// Check role: user can be mod or admin
 	// If user is admin -> auto allow, if user is a mod -> check topic's mods contains user
 	if (*user).GetRoleType() == common.Moderator {
 		isValid := false
 		for _, modId := range topic.ModeratorIds {
-			if modId.Hex() == (*user).GetUserId() {
+			if modId == (*user).GetUserId() {
 				isValid = true
 				break
 			}
@@ -40,7 +46,7 @@ func (biz *postBusiness) ApprovePostById(ctx context.Context, postId *string, us
 
 	updatedPost, err := biz.postRepo.Update(
 		ctx,
-		map[string]interface{}{"id": *postId},
+		postFilter,
 		map[string]interface{}{"status": entity.Approved},
 	)
 
