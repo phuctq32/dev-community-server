@@ -23,6 +23,8 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 		postProtectedRouter.POST("", postHandler.CreatePost(appCtx))
 		postProtectedRouter.PATCH("/:id", postHandler.UpdatePost(appCtx))
 		postProtectedRouter.DELETE("/:id")
+		postProtectedRouter.POST("/:id/up-vote", postHandler.UpVote(appCtx))
+		postProtectedRouter.POST("/:id/down-vote", postHandler.DownVote(appCtx))
 		postProtectedRouter.POST("/:id/view")
 		postProtectedRouter.POST("/:id/approve", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.ApprovePostHandler(appCtx))
 		postProtectedRouter.POST("/:id/block", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.BlockPostHandler(appCtx))

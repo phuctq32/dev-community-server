@@ -15,6 +15,12 @@ func (repo *postRepository) Update(ctx context.Context, filter map[string]interf
 	if err := common.BsonMap(data).ToListObjectId("tag_ids"); err != nil {
 		return nil, common.NewServerError(err)
 	}
+	if err := common.BsonMap(data).ToListObjectId("up_votes"); err != nil {
+		return nil, common.NewServerError(err)
+	}
+	if err := common.BsonMap(data).ToListObjectId("down_votes"); err != nil {
+		return nil, common.NewServerError(err)
+	}
 
 	var post entity.Post
 	opts := options.FindOneAndUpdate().SetReturnDocument(1)

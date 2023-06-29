@@ -27,6 +27,8 @@ type PostBusiness interface {
 	SavePost(ctx context.Context, postId string, userId string) ([]entity.Post, error)
 	RemoveAllPostsFromCurrentUserSavedPosts(ctx context.Context, userId string) ([]entity.Post, error)
 	RemovePostFromSavedPosts(ctx context.Context, postId string, userId string) ([]entity.Post, error)
+	UpVote(ctx context.Context, postId string, userId string) (*entity.Post, error)
+	DownVote(ctx context.Context, postId string, userId string) (*entity.Post, error)
 }
 
 type postHandler struct {
