@@ -31,7 +31,7 @@ type Comment struct {
 	// Computed Fields
 	Author     *userEntity.User `bson:"-" json:"author"`
 	Score      *int             `bson:"-" json:"score,omitempty"`
-	Replies    []Comment        `bson:"-" json:"replies,omitempty"`
+	Replies    *[]Comment       `bson:"-" json:"replies,omitempty"`
 	ReplyCount *int             `bson:"-" json:"reply_count,omitempty"`
 }
 

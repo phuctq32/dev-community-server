@@ -10,7 +10,7 @@ import (
 
 func (hdl *postHandler) GetPendingPost(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var pagination *common.Pagination
+		pagination := common.DefaultPagination
 		limit, gotLimit := c.GetQuery("limit")
 		page, gotPage := c.GetQuery("page")
 		if gotLimit && gotPage {

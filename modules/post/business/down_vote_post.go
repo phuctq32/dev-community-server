@@ -35,6 +35,9 @@ func (biz *postBusiness) DownVote(ctx context.Context, postId string, userId str
 	updateData := map[string]interface{}{}
 	for _, id := range post.DownVotes {
 		if id == *currentUser.Id {
+			if err = biz.SetComputedData(ctx, post); err != nil {
+				return nil, err
+			}
 			return post, nil
 		}
 	}

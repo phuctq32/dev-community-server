@@ -15,6 +15,8 @@ type CommentBusiness interface {
 	GetCommentById(ctx context.Context, id string) (*entity.Comment, error)
 	UpdateComment(ctx context.Context, data *entity.CommentUpdate) (*entity.Comment, error)
 	GetReplies(ctx context.Context, parentCmtId string) ([]entity.Comment, error)
+	UpVote(ctx context.Context, cmtId string, userId string) (*entity.Comment, error)
+	DownVote(ctx context.Context, cmtId string, userId string) (*entity.Comment, error)
 }
 
 type commentHandler struct {

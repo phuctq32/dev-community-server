@@ -35,6 +35,9 @@ func (biz *postBusiness) UpVote(ctx context.Context, postId string, userId strin
 	updateData := map[string]interface{}{}
 	for _, id := range post.UpVotes {
 		if id == *currentUser.Id {
+			if err = biz.SetComputedData(ctx, post); err != nil {
+				return nil, err
+			}
 			return post, nil
 		}
 	}

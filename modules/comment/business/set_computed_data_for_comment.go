@@ -58,9 +58,7 @@ func (biz *commentBusiness) SetReplies(ctx context.Context, cmt *entity.Comment)
 		return err
 	}
 
-	cmt.Replies = replies
-	replyCount := len(replies)
-	cmt.ReplyCount = &replyCount
+	cmt.Replies = &replies
 	return nil
 }
 
