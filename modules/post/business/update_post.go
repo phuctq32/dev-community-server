@@ -8,7 +8,11 @@ import (
 )
 
 func (biz *postBusiness) UpdatePost(ctx context.Context, data *entity.PostUpdate) (*entity.Post, error) {
-	post, err := biz.postRepo.FindOne(ctx, map[string]interface{}{"id": *data.Id})
+	postFilter := map[string]interface{}{}
+	if err := common.AppendIdQuery(postFilter, "id", *data.Id); err != nil {
+		return nil, err
+	}
+	post, err := biz.postRepo.FindOne(ctx, postFilter)
 	if err != nil {
 		return nil, err
 	}
