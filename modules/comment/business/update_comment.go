@@ -7,9 +7,9 @@ import (
 	entity2 "dev_community_server/modules/post/entity"
 )
 
-func (biz *commentBusiness) CreateComment(ctx context.Context, data *entity.CommentCreate) (*entity.Comment, error) {
+func (biz *commentBusiness) UpdateComment(ctx context.Context, data *entity.CommentUpdate) (*entity.Comment, error) {
 	userFilter := map[string]interface{}{}
-	_ = common.AppendIdQuery(userFilter, "id", data.AuthorId)
+	_ = common.AppendIdQuery(userFilter, "id", data.UserId)
 	user, err := biz.userRepo.FindOne(ctx, userFilter)
 	if err != nil {
 		return nil, err
@@ -18,10 +18,22 @@ func (biz *commentBusiness) CreateComment(ctx context.Context, data *entity.Comm
 		return nil, common.NewNotFoundError("User", common.ErrNotFound)
 	}
 
-	postFilter := map[string]interface{}{}
-	if err = common.AppendIdQuery(postFilter, "id", data.PostId); err != nil {
+	cmtFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(cmtFilter, "id", data.CommentId)
+	cmt, err := biz.commentRepo.FindOne(ctx, cmtFilter)
+	if err != nil {
 		return nil, err
 	}
+	if cmt == nil {
+		return nil, common.NewNotFoundError("Comment", common.ErrNotFound)
+	}
+
+	if *user.Id != cmt.AuthorId {
+		return nil, common.NewCustomBadRequestError("User is not comment author")
+	}
+
+	postFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(postFilter, "id", cmt.PostId)
 	post, err := biz.postRepo.FindOne(ctx, postFilter)
 	if err != nil {
 		return nil, err
@@ -36,14 +48,15 @@ func (biz *commentBusiness) CreateComment(ctx context.Context, data *entity.Comm
 		return nil, common.NewCustomBadRequestError("Post is block. Not allow to comment")
 	}
 
-	comment, err := biz.commentRepo.Create(ctx, data)
+	updateData := map[string]interface{}{"content": data.Content}
+	updatedCmt, err := biz.commentRepo.Update(ctx, cmtFilter, updateData)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = biz.SetComputedData(ctx, comment); err != nil {
+	if err = biz.SetComputedData(ctx, updatedCmt); err != nil {
 		return nil, err
 	}
 
-	return comment, nil
+	return updatedCmt, nil
 }

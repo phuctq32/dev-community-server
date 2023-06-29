@@ -12,10 +12,13 @@ func NewCommentRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 
 	commentRouter := group.Group("/comments")
 	{
-
+		commentRouter.GET("/:id", commentHandler.GetCommentById(appCtx))
+		commentRouter.GET("/:id/replies", commentHandler.GetReplies(appCtx))
 	}
+
 	commentProtectedRouter := commentRouter.Use(middlewares.Authorize(appCtx))
 	{
 		commentProtectedRouter.POST("", commentHandler.CreateComment(appCtx))
+		commentProtectedRouter.PATCH("/:id", commentHandler.UpdateComment(appCtx))
 	}
 }

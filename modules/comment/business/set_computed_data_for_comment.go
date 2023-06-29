@@ -38,9 +38,18 @@ func (biz *commentBusiness) SetAuthorData(ctx context.Context, cmt *entity.Comme
 }
 
 func (biz *commentBusiness) SetReplies(ctx context.Context, cmt *entity.Comment) error {
+	repliesFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(repliesFilter, "parent_comment_id", *cmt.Id)
+	replies, err := biz.commentRepo.Find(ctx, repliesFilter)
+	if err != nil {
+		return err
+	}
+
+	cmt.Replies = replies
+	*cmt.ReplyCount = len(replies)
 	return nil
 }
 
 func (biz *commentBusiness) SetScore(cmt *entity.Comment) {
-	cmt.Score = len(cmt.UpVotes) - len(cmt.DownVotes)
+	*cmt.Score = len(cmt.UpVotes) - len(cmt.DownVotes)
 }

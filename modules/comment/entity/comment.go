@@ -18,9 +18,9 @@ type Comment struct {
 	DownVotes              []string `bson:"down_votes" json:"down_votes"`
 	// Computed Fields
 	Author     *userEntity.User `bson:"-" json:"author"`
-	Score      int              `bson:"-" json:"score"`
+	Score      *int             `bson:"-" json:"score"`
 	Replies    []Comment        `bson:"-" json:"replies"`
-	ReplyCount int              `bson:"-" json:"reply_count"`
+	ReplyCount *int             `bson:"-" json:"reply_count"`
 }
 
 func (*Comment) CollectionName() string { return "comments" }

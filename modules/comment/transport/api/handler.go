@@ -12,6 +12,9 @@ import (
 
 type CommentBusiness interface {
 	CreateComment(ctx context.Context, data *entity.CommentCreate) (*entity.Comment, error)
+	GetCommentById(ctx context.Context, id string) (*entity.Comment, error)
+	UpdateComment(ctx context.Context, data *entity.CommentUpdate) (*entity.Comment, error)
+	GetReplies(ctx context.Context, parentCmtId string) ([]entity.Comment, error)
 }
 
 type commentHandler struct {
