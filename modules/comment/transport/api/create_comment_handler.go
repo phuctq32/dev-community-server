@@ -5,7 +5,6 @@ import (
 	"dev_community_server/components/appctx"
 	"dev_community_server/modules/comment/entity"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -17,10 +16,12 @@ func (hdl *commentHandler) CreateComment(appCtx appctx.AppContext) gin.HandlerFu
 			panic(err)
 		}
 
+		if err := appCtx.GetValidator().Validate(&data); err != nil {
+			panic(err)
+		}
+
 		requester := c.MustGet(common.ReqUser).(common.Requester)
-		userId := requester.GetUserId()
-		data.AuthorId = &userId
-		log.Println(data)
+		data.AuthorId = requester.GetUserId()
 
 		comment, err := hdl.business.CreateComment(c.Request.Context(), &data)
 		if err != nil {

@@ -6,6 +6,7 @@ import (
 	"dev_community_server/modules/comment/business"
 	"dev_community_server/modules/comment/entity"
 	"dev_community_server/modules/comment/repository"
+	repository3 "dev_community_server/modules/post/repository"
 	repository2 "dev_community_server/modules/user/repository"
 )
 
@@ -20,8 +21,9 @@ type commentHandler struct {
 func NewCommentHandler(appCtx appctx.AppContext) *commentHandler {
 	cmtRepo := repository.NewCommentRepository(appCtx.GetMongoDBConnection())
 	userRepo := repository2.NewUserRepository(appCtx.GetMongoDBConnection())
+	postRepo := repository3.NewPostRepository(appCtx.GetMongoDBConnection())
 
-	biz := business.NewCommentBusiness(cmtRepo, userRepo)
+	biz := business.NewCommentBusiness(cmtRepo, userRepo, postRepo)
 
 	return &commentHandler{business: biz}
 }
