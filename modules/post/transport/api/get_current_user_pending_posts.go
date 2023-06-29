@@ -29,12 +29,12 @@ func (hdl *postHandler) GetCurrentUserPendingPosts(appCtx appctx.AppContext) gin
 
 		requester := c.MustGet(common.ReqUser).(common.Requester)
 
-		posts, paginationInfo, err := hdl.business.GetCurrentUserSavedPosts(c.Request.Context(), pagination, &requester)
+		posts, err := hdl.business.GetCurrentUserSavedPosts(c.Request.Context(), requester.GetUserId())
 		if err != nil {
 			panic(err)
 		}
 		postCount := len(posts)
 
-		c.JSON(http.StatusOK, common.NewFullResponse("", posts, &postCount, paginationInfo))
+		c.JSON(http.StatusOK, common.NewFullResponse("", posts, &postCount, nil))
 	}
 }

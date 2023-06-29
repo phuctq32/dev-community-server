@@ -32,10 +32,10 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 
 	currentUserRouter := group.Group("/me", middlewares.Authorize(appCtx))
 	{
-		currentUserRouter.GET("/saved-posts")
-		currentUserRouter.POST("/saved-posts/:postId")
-		currentUserRouter.DELETE("/saved-posts/:postId")
-		currentUserRouter.DELETE("/saved-posts")
+		currentUserRouter.GET("/saved-posts", postHandler.GetCurrentUserSavedPosts(appCtx))
+		currentUserRouter.POST("/saved-posts/:postId", postHandler.SavePost(appCtx))
+		currentUserRouter.DELETE("/saved-posts/:postId", postHandler.RemovePostFromCurrentUserSavedPosts(appCtx))
+		currentUserRouter.DELETE("/saved-posts", postHandler.RemoveAllPostsFromCurrentUserSavedPosts(appCtx))
 		// Pending posts
 		currentUserRouter.GET("/pending-posts", postHandler.GetCurrentUserPendingPosts(appCtx))
 		// Approved posts (posted posts)

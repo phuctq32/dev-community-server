@@ -6,39 +6,28 @@ import (
 	"dev_community_server/modules/post/entity"
 )
 
-func (biz *postBusiness) GetCurrentUserSavedPosts(ctx context.Context, pagination *common.Pagination, user *common.Requester) ([]entity.Post, *common.PaginationInformation, error) {
+func (biz *postBusiness) GetCurrentUserSavedPosts(ctx context.Context, userId string) ([]entity.Post, error) {
 	userFilter := map[string]interface{}{}
-	_ = common.AppendIdQuery(userFilter, "id", (*user).GetUserId())
+	_ = common.AppendIdQuery(userFilter, "id", userId)
 	currentUser, err := biz.userRepo.FindOne(ctx, userFilter)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	if currentUser == nil {
-		return nil, nil, common.NewNotFoundError("User", common.ErrNotFound)
+		return nil, common.NewNotFoundError("User", common.ErrNotFound)
 	}
 
 	postFilter := map[string]interface{}{}
 	_ = common.AppendInListIdQuery(postFilter, "id", currentUser.SavedPostIds)
-	posts, err := biz.postRepo.Find(ctx, postFilter, pagination)
+	posts, err := biz.postRepo.Find(ctx, postFilter, nil)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	totalPostCount := len(posts)
 
 	for i := range posts {
-		if err := biz.SetComputedData(ctx, &posts[i]); err != nil {
-			return nil, nil, err
+		if err = biz.SetComputedData(ctx, &posts[i]); err != nil {
+			return nil, err
 		}
 	}
-
-	totalPage := totalPostCount / (pagination.Limit)
-	if totalPostCount%pagination.Limit > 0 {
-		totalPage++
-	}
-	paginationInfo := &common.PaginationInformation{
-		PerPage:   &pagination.Limit,
-		Page:      &pagination.Page,
-		TotalPage: &totalPage,
-	}
-	return posts, paginationInfo, nil
+	return posts, nil
 }

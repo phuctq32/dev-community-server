@@ -6,15 +6,12 @@ import (
 	"dev_community_server/modules/post/entity"
 )
 
-func (biz *postBusiness) SavePost(ctx context.Context, postId string, userId string) ([]entity.Post, error) {
+func (biz *postBusiness) RemovePostFromSavedPosts(ctx context.Context, postId string, userId string) ([]entity.Post, error) {
 	userFilter := map[string]interface{}{}
 	_ = common.AppendIdQuery(userFilter, "id", userId)
-	currentUser, err := biz.userRepo.FindOne(ctx, userFilter)
+	user, err := biz.userRepo.FindOne(ctx, userFilter)
 	if err != nil {
 		return nil, err
-	}
-	if currentUser == nil {
-		return nil, common.NewNotFoundError("User", common.ErrNotFound)
 	}
 
 	postFilter := map[string]interface{}{}
@@ -32,14 +29,21 @@ func (biz *postBusiness) SavePost(ctx context.Context, postId string, userId str
 		return nil, common.NewCustomBadRequestError("Post is pending")
 	}
 
-	for _, savedPostId := range currentUser.SavedPostIds {
-		if savedPostId == postId {
-			return nil, common.NewCustomBadRequestError("Post already exists in saved posts")
+	isContain := false
+	removeIndex := 0
+	for i, id := range user.SavedPostIds {
+		if postId == id {
+			removeIndex = i
+			isContain = true
+			break
 		}
 	}
+	if !isContain {
+		return nil, common.NewCustomBadRequestError("post is not contain in saved posts")
+	}
 
-	updatedSavedPosts := append(currentUser.SavedPostIds, postId)
-	_, err = biz.userRepo.Update(ctx, userFilter, map[string]interface{}{"saved_post_ids": updatedSavedPosts})
+	updatedSavedPosts := append(user.SavedPostIds[:removeIndex], user.SavedPostIds[removeIndex+1:]...)
+	_, err = biz.userRepo.Update(ctx, userFilter, map[string]interface{}{"saved_posts_ids": updatedSavedPosts})
 	if err != nil {
 		return nil, err
 	}
@@ -55,6 +59,5 @@ func (biz *postBusiness) SavePost(ctx context.Context, postId string, userId str
 			return nil, err
 		}
 	}
-
 	return posts, nil
 }

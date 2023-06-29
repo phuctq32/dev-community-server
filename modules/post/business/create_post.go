@@ -56,5 +56,8 @@ func (biz *postBusiness) CreatePost(ctx context.Context, data *entity.PostCreate
 	post.Topic = topic
 	post.Tags = tags
 
+	post.Score = 0
+	post.CommentCount = 0
+
 	return post, nil
 }
