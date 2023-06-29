@@ -55,7 +55,7 @@ func (biz *postBusiness) RemovePostFromSavedPosts(ctx context.Context, postId st
 	}
 
 	for i := range posts {
-		if err = biz.SetComputedData(ctx, &posts[i]); err != nil {
+		if err = biz.SetComputedDataForPostInList(ctx, &posts[i]); err != nil {
 			return nil, err
 		}
 	}

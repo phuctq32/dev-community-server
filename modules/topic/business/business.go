@@ -6,7 +6,7 @@ import (
 )
 
 type TopicRepository interface {
-	Create(ctx context.Context, data *entity.TopicCreate) (*entity.Topic, error)
+	Create(ctx context.Context, topic *entity.Topic) (*entity.Topic, error)
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Topic, error)
 	Find(ctx context.Context, filter map[string]interface{}) ([]entity.Topic, error)
 }

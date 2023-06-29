@@ -8,10 +8,11 @@ import (
 )
 
 type CommentRepository interface {
-	Create(ctx context.Context, data *entity.CommentCreate) (*entity.Comment, error)
+	Create(ctx context.Context, data *entity.Comment) (*entity.Comment, error)
 	Find(ctx context.Context, filter map[string]interface{}) ([]entity.Comment, error)
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Comment, error)
 	Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*entity.Comment, error)
+	Count(ctx context.Context, filter map[string]interface{}) (*int, error)
 }
 
 type UserRepository interface {

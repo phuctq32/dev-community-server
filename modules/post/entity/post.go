@@ -7,6 +7,7 @@ import (
 	entity2 "dev_community_server/modules/topic/entity"
 	userEntity "dev_community_server/modules/user/entity"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type PostStatus uint8
@@ -15,6 +16,22 @@ const (
 	Pending PostStatus = iota
 	Approved
 )
+
+type PostInsert struct {
+	common.MongoId         `bson:",inline" json:",inline"`
+	common.MongoTimestamps `bson:",inline" json:",inline"`
+	Title                  string               `bson:"title"`
+	Content                string               `bson:"content"`
+	Images                 []string             `bson:"images"`
+	AuthorId               primitive.ObjectID   `bson:"author_id"`
+	TopicId                primitive.ObjectID   `bson:"topic_id"`
+	TagIds                 []primitive.ObjectID `bson:"tag_ids"`
+	Status                 PostStatus           `bson:"status"`
+	UpVotes                []primitive.ObjectID `bson:"up_votes"`
+	DownVotes              []primitive.ObjectID `bson:"down_votes"`
+	ViewCount              int                  `bson:"view_count"`
+	IsBlocked              bool                 `bson:"is_blocked"`
+}
 
 type Post struct {
 	common.MongoId         `bson:",inline" json:",inline"`
@@ -49,15 +66,15 @@ func (post *Post) MarshalBSON() ([]byte, error) {
 		return nil, err
 	}
 
-	if err := bm.ToObjectId("author_id"); err != nil {
+	if err := bm.ToMongoId("author_id"); err != nil {
 		return nil, err
 	}
 
-	if err := bm.ToObjectId("topic_id"); err != nil {
+	if err := bm.ToMongoId("topic_id"); err != nil {
 		return nil, err
 	}
 
-	if err := bm.ToListObjectId("tag_ids"); err != nil {
+	if err := bm.ToListMongoId("tag_ids"); err != nil {
 		return nil, err
 	}
 

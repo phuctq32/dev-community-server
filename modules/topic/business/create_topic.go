@@ -19,7 +19,13 @@ func (biz *topicBusiness) CreateTopic(ctx context.Context, data *entity.TopicCre
 	if data.Description == "" {
 		data.Description = "No description"
 	}
-	topic, err := biz.repo.Create(ctx, data)
+
+	topic := &entity.Topic{
+		Name:         data.Name,
+		Description:  data.Description,
+		ModeratorIds: []string{},
+	}
+	topic, err = biz.repo.Create(ctx, topic)
 	if err != nil {
 		return nil, err
 	}

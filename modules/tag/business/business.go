@@ -7,7 +7,7 @@ import (
 )
 
 type TagRepository interface {
-	Create(ctx context.Context, data *entity.TagCreate) (*entity.Tag, error)
+	Create(ctx context.Context, tag *entity.Tag) (*entity.Tag, error)
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.Tag, error)
 	Find(ctx context.Context, filter map[string]interface{}) ([]entity.Tag, error)
 }

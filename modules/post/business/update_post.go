@@ -56,7 +56,7 @@ func (biz *postBusiness) UpdatePost(ctx context.Context, data *entity.PostUpdate
 				return nil, err
 			}
 			if tag == nil {
-				tag, err = biz.tagRepo.Create(ctx, &entity2.TagCreate{Name: tagName, TopicId: *topic.Id})
+				tag, err = biz.tagRepo.Create(ctx, &entity2.Tag{Name: tagName, TopicId: *topic.Id})
 				if err != nil {
 					return nil, err
 				}

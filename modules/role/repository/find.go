@@ -18,5 +18,9 @@ func (repo *roleRepository) Find(ctx context.Context) ([]entity.Role, error) {
 		return nil, common.NewServerError(err)
 	}
 
+	if roles == nil {
+		roles = []entity.Role{}
+	}
+
 	return roles, nil
 }

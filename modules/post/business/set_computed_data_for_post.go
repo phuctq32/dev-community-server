@@ -7,29 +7,42 @@ import (
 	entity2 "dev_community_server/modules/tag/entity"
 )
 
-func (biz *postBusiness) SetComputedData(ctx context.Context, post *entity.Post) error {
-	// Get author
+func (biz *postBusiness) SetComputedDataForPostInList(ctx context.Context, post *entity.Post) error {
+	// Set author
 	if err := biz.SetAuthorData(ctx, post); err != nil {
 		return err
 	}
 
-	// Get topic
+	// Set topic
 	if err := biz.SetTopicData(ctx, post); err != nil {
 		return err
 	}
 
-	// Get tags
+	// Set tags
 	if err := biz.SetTagsData(ctx, post); err != nil {
 		return err
 	}
 
-	// Get comments (not include replies) and count total comments (included replies)
-	if err := biz.SetCommentData(ctx, post); err != nil {
+	// Set count total comments (included replies)
+	if err := biz.SetCommentCountData(ctx, post); err != nil {
 		return err
 	}
 
 	// Calc score
 	biz.SetScoreData(ctx, post)
+
+	return nil
+}
+
+func (biz *postBusiness) SetComputedData(ctx context.Context, post *entity.Post) error {
+	if err := biz.SetComputedDataForPostInList(ctx, post); err != nil {
+		return err
+	}
+
+	// Set comments (not include replies) and count total comments (included replies)
+	if err := biz.SetCommentData(ctx, post); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -80,6 +93,54 @@ func (biz *postBusiness) SetTagsData(ctx context.Context, post *entity.Post) err
 }
 
 func (biz *postBusiness) SetCommentData(ctx context.Context, post *entity.Post) error {
+	cmtFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(cmtFilter, "post_id", *post.Id)
+	cmtFilter["parent_comment_id"] = nil
+	comments, err := biz.commentRepo.Find(ctx, cmtFilter)
+	if err != nil {
+		return err
+	}
+
+	for i := range comments {
+		// Set author data
+		userFilter := map[string]interface{}{}
+		_ = common.AppendIdQuery(userFilter, "id", comments[i].AuthorId)
+		author, err := biz.userRepo.FindOne(ctx, userFilter)
+		if err != nil {
+			return err
+		}
+		if author == nil {
+			return common.NewNotFoundError("User", common.ErrNotFound)
+		}
+		comments[i].Author = author
+
+		// Set Reply Count
+		repliesFilter := map[string]interface{}{}
+		_ = common.AppendIdQuery(repliesFilter, "parent_comment_id", *comments[i].Id)
+		replyCount, err := biz.commentRepo.Count(ctx, repliesFilter)
+		if err != nil {
+			return err
+		}
+		comments[i].ReplyCount = replyCount
+
+		// Set Score
+		score := len(*comments[i].UpVotes) - len(*comments[i].DownVotes)
+		comments[i].Score = &score
+	}
+
+	post.Comments = comments
+	return nil
+}
+
+func (biz *postBusiness) SetCommentCountData(ctx context.Context, post *entity.Post) error {
+	cmtFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(cmtFilter, "post_id", *post.Id)
+	totalCommentCount, err := biz.commentRepo.Count(ctx, cmtFilter)
+	if err != nil {
+		return err
+	}
+
+	post.CommentCount = *totalCommentCount
 	return nil
 }
 

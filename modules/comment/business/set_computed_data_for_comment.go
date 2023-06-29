@@ -6,9 +6,25 @@ import (
 	"dev_community_server/modules/comment/entity"
 )
 
-func (biz *commentBusiness) SetComputedData(ctx context.Context, cmt *entity.Comment) error {
+func (biz *commentBusiness) SetComputedDataForCommentInList(ctx context.Context, cmt *entity.Comment) error {
 	// Set author
 	if err := biz.SetAuthorData(ctx, cmt); err != nil {
+		return err
+	}
+
+	// Set reply count
+	if err := biz.SetReplyCount(ctx, cmt); err != nil {
+		return err
+	}
+
+	// Set score
+	biz.SetScore(cmt)
+
+	return nil
+}
+
+func (biz *commentBusiness) SetComputedData(ctx context.Context, cmt *entity.Comment) error {
+	if err := biz.SetComputedDataForCommentInList(ctx, cmt); err != nil {
 		return err
 	}
 
@@ -16,9 +32,6 @@ func (biz *commentBusiness) SetComputedData(ctx context.Context, cmt *entity.Com
 	if err := biz.SetReplies(ctx, cmt); err != nil {
 		return err
 	}
-
-	// Set score
-	biz.SetScore(cmt)
 
 	return nil
 }
@@ -46,10 +59,24 @@ func (biz *commentBusiness) SetReplies(ctx context.Context, cmt *entity.Comment)
 	}
 
 	cmt.Replies = replies
-	*cmt.ReplyCount = len(replies)
+	replyCount := len(replies)
+	cmt.ReplyCount = &replyCount
+	return nil
+}
+
+func (biz *commentBusiness) SetReplyCount(ctx context.Context, cmt *entity.Comment) error {
+	repliesFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(repliesFilter, "parent_comment_id", *cmt.Id)
+	replyCount, err := biz.commentRepo.Count(ctx, repliesFilter)
+	if err != nil {
+		return err
+	}
+
+	cmt.ReplyCount = replyCount
 	return nil
 }
 
 func (biz *commentBusiness) SetScore(cmt *entity.Comment) {
-	*cmt.Score = len(cmt.UpVotes) - len(cmt.DownVotes)
+	score := len(*cmt.UpVotes) - len(*cmt.DownVotes)
+	cmt.Score = &score
 }

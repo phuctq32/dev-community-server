@@ -12,7 +12,7 @@ func (hdl *commentHandler) GetReplies(appCtx appctx.AppContext) gin.HandlerFunc 
 		params := struct {
 			CommentId string `json:"commentId" validate:"mongodb"`
 		}{}
-		params.CommentId = c.Param(":id")
+		params.CommentId = c.Param("id")
 
 		if err := appCtx.GetValidator().Validate(&params); err != nil {
 			panic(common.NewValidationError(err))

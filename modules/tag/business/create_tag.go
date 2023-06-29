@@ -32,7 +32,11 @@ func (biz *tagBusiness) CreateTag(ctx context.Context, data *entity.TagCreate) (
 		return nil, common.NewExistingError("Tag")
 	}
 
-	newTag, err := biz.tagRepo.Create(ctx, data)
+	newTag := &entity.Tag{
+		Name:    data.Name,
+		TopicId: data.TopicId,
+	}
+	newTag, err = biz.tagRepo.Create(ctx, newTag)
 	if err != nil {
 		return nil, err
 	}

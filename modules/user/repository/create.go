@@ -7,27 +7,29 @@ import (
 	"time"
 )
 
-func (repo *userRepository) Create(ctx context.Context, data *userEntity.UserCreate) error {
-	birthday := time.Time(data.Birthday)
-	if _, err := repo.userColl.InsertOne(ctx, &userEntity.User{
+func (repo *userRepository) Create(ctx context.Context, user *userEntity.User) error {
+	// Convert to object id
+	roleOid, err := common.ToObjectId(user.RoleId)
+	if err != nil {
+		return err
+	}
+
+	insertData := &userEntity.UserInsert{
 		MongoTimestamps: common.MongoTimestamps{
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		Email:     data.Email,
-		FirstName: data.FirstName,
-		LastName:  data.LastName,
-		Password:  data.Password,
-		Birthday:  &birthday,
-		Avatar:    common.DefaultAvatarUrl,
-		RoleId:    data.RoleId,
-		VerifiedToken: &userEntity.Token{
-			Token:     data.VerifiedToken,
-			ExpiredAt: time.Now().Add(time.Duration(time.Hour * 24 * 7)),
-		},
-		IsVerified:   false,
-		SavedPostIds: []string{},
-	}); err != nil {
+		Email:         user.Email,
+		FirstName:     user.FirstName,
+		LastName:      user.LastName,
+		Password:      user.Password,
+		Birthday:      user.Birthday,
+		Avatar:        common.DefaultAvatarUrl,
+		RoleId:        roleOid,
+		VerifiedToken: user.VerifiedToken,
+	}
+
+	if _, err = repo.userColl.InsertOne(ctx, insertData); err != nil {
 		return common.NewServerError(err)
 	}
 

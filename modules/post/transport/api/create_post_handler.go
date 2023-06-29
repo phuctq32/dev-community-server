@@ -4,7 +4,6 @@ import (
 	"dev_community_server/common"
 	"dev_community_server/components/appctx"
 	"dev_community_server/modules/post/entity"
-	userEntity "dev_community_server/modules/user/entity"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -22,7 +21,7 @@ func (hdl *postHandler) CreatePost(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		requester := c.MustGet(common.ReqUser).(common.Requester)
-		data.Author = requester.(*userEntity.User)
+		data.AuthorId = requester.GetUserId()
 
 		post, err := hdl.business.CreatePost(c.Request.Context(), &data)
 		if err != nil {

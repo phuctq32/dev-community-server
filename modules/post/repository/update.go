@@ -9,16 +9,16 @@ import (
 )
 
 func (repo *postRepository) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*entity.Post, error) {
-	if err := common.BsonMap(data).ToObjectId("topic_id"); err != nil {
+	if err := common.BsonMap(data).ToMongoId("topic_id"); err != nil {
 		return nil, common.NewServerError(err)
 	}
-	if err := common.BsonMap(data).ToListObjectId("tag_ids"); err != nil {
+	if err := common.BsonMap(data).ToListMongoId("tag_ids"); err != nil {
 		return nil, common.NewServerError(err)
 	}
-	if err := common.BsonMap(data).ToListObjectId("up_votes"); err != nil {
+	if err := common.BsonMap(data).ToListMongoId("up_votes"); err != nil {
 		return nil, common.NewServerError(err)
 	}
-	if err := common.BsonMap(data).ToListObjectId("down_votes"); err != nil {
+	if err := common.BsonMap(data).ToListMongoId("down_votes"); err != nil {
 		return nil, common.NewServerError(err)
 	}
 

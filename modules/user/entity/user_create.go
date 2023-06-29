@@ -10,7 +10,7 @@ type UserCreate struct {
 	LastName        string      `json:"last_name" validate:"required"`
 	Password        string      `json:"password" validate:"required,min=6,alphanumunicode"`
 	ConfirmPassword string      `json:"confirm_password" validate:"eqfield=Password"`
-	Birthday        common.Date `json:"birthday"`
+	Birthday        common.Date `json:"birthday" validate:"required"`
 	RoleId          string
 	VerifiedToken   string
 }

@@ -8,7 +8,6 @@ import (
 )
 
 type UserRepository interface {
-	Create(ctx context.Context, data *entity.UserCreate) error
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity.User, error)
 	Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*entity.User, error)
 }

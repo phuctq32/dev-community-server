@@ -36,7 +36,7 @@ func (biz *postBusiness) GetPendingPosts(ctx context.Context, pagination *common
 	}
 
 	for i := range posts {
-		if err := biz.SetComputedData(ctx, &posts[i]); err != nil {
+		if err := biz.SetComputedDataForPostInList(ctx, &posts[i]); err != nil {
 			return nil, nil, err
 		}
 	}

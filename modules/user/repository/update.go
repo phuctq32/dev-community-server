@@ -9,10 +9,10 @@ import (
 )
 
 func (repo *userRepository) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*entity.User, error) {
-	if err := common.BsonMap(data).ToObjectId("role_id"); err != nil {
+	if err := common.BsonMap(data).ToMongoId("role_id"); err != nil {
 		return nil, common.NewServerError(err)
 	}
-	if err := common.BsonMap(data).ToListObjectId("saved_post_ids"); err != nil {
+	if err := common.BsonMap(data).ToListMongoId("saved_post_ids"); err != nil {
 		return nil, common.NewServerError(err)
 	}
 

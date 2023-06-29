@@ -9,7 +9,7 @@ import (
 )
 
 func (repo *topicRepository) Update(ctx context.Context, filter map[string]interface{}, data map[string]interface{}) (*entity.Topic, error) {
-	if err := common.BsonMap(data).ToListObjectId("moderator_ids"); err != nil {
+	if err := common.BsonMap(data).ToListMongoId("moderator_ids"); err != nil {
 		return nil, common.NewServerError(err)
 	}
 

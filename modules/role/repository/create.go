@@ -16,7 +16,8 @@ func (repo *roleRepository) Create(ctx context.Context, data *entity.RoleCreate)
 	if err != nil {
 		return nil, common.NewServerError(err)
 	}
-	*role.Id = result.InsertedID.(primitive.ObjectID).Hex()
+	insertedId := result.InsertedID.(primitive.ObjectID).Hex()
+	role.Id = &insertedId
 
 	return role, nil
 }

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"dev_community_server/common"
+	"log"
 )
 
 func (repo *commentRepository) Count(ctx context.Context, filter map[string]interface{}) (*int, error) {
@@ -11,6 +12,7 @@ func (repo *commentRepository) Count(ctx context.Context, filter map[string]inte
 		return nil, common.NewServerError(err)
 	}
 	result := int(postCount)
+	log.Println(result)
 
 	return &result, nil
 }

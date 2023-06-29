@@ -4,6 +4,7 @@ import (
 	"context"
 	"dev_community_server/common"
 	"dev_community_server/components/appctx"
+	repository5 "dev_community_server/modules/comment/repository"
 	"dev_community_server/modules/post/business"
 	"dev_community_server/modules/post/entity"
 	"dev_community_server/modules/post/repository"
@@ -38,9 +39,10 @@ type postHandler struct {
 func NewPostHandler(appCtx appctx.AppContext) *postHandler {
 	postRepo := repository.NewPostRepository(appCtx.GetMongoDBConnection())
 	userRepo := repository2.NewUserRepository(appCtx.GetMongoDBConnection())
+	cmtRepo := repository5.NewCommentRepository(appCtx.GetMongoDBConnection())
 	topicRepo := repository3.NewTopicRepository(appCtx.GetMongoDBConnection())
 	tagRepo := repository4.NewTagRepository(appCtx.GetMongoDBConnection())
-	biz := business.NewPostBusiness(postRepo, userRepo, topicRepo, tagRepo)
+	biz := business.NewPostBusiness(postRepo, userRepo, cmtRepo, topicRepo, tagRepo)
 
 	return &postHandler{business: biz}
 }

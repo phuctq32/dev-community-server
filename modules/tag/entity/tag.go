@@ -3,8 +3,14 @@ package entity
 import (
 	"dev_community_server/common"
 	"dev_community_server/modules/topic/entity"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
+type TagInsert struct {
+	common.MongoId `bson:",inline"`
+	Name           string             `bson:"name"`
+	TopicId        primitive.ObjectID `bson:"topic_id"`
+}
 
 type Tag struct {
 	common.MongoId `bson:",inline" json:",inline"`
@@ -14,18 +20,3 @@ type Tag struct {
 }
 
 func (*Tag) CollectionName() string { return "tags" }
-
-func (tag *Tag) MarshalBSON() ([]byte, error) {
-	dataBytes, _ := bson.Marshal(tag)
-
-	var bm common.BsonMap
-	if err := bson.Unmarshal(dataBytes, &bm); err != nil {
-		return nil, err
-	}
-
-	if err := bm.ToObjectId("topic_id"); err != nil {
-		return nil, err
-	}
-
-	return bson.Marshal(bm)
-}

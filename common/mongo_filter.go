@@ -8,23 +8,32 @@ import (
 
 type BsonMap map[string]interface{}
 
-func (m BsonMap) ToObjectId(key string) error {
+func ToObjectId(val string) (primitive.ObjectID, error) {
+	oid, err := primitive.ObjectIDFromHex(val)
+	if err != nil {
+		return primitive.NilObjectID, errors.New("invalid objectId")
+	}
+
+	return oid, nil
+}
+
+func (m BsonMap) ToMongoId(key string) error {
 	if _, ok := m[key]; !ok {
 		return nil
 	}
 	if reflect.ValueOf(m[key]).Kind() != reflect.String {
 		return errors.New("type of m[key] must be string")
 	}
-	oid, err := primitive.ObjectIDFromHex(m[key].(string))
+	oid, err := ToObjectId(m[key].(string))
 	if err != nil {
-		return errors.New("invalid objectId")
+		return err
 	}
 
 	m[key] = oid
 	return nil
 }
 
-func (m BsonMap) ToListObjectId(key string) error {
+func (m BsonMap) ToListMongoId(key string) error {
 	if _, ok := m[key]; !ok {
 		return nil
 	}
@@ -33,9 +42,9 @@ func (m BsonMap) ToListObjectId(key string) error {
 	}
 	oids := make([]primitive.ObjectID, len(m[key].([]string)))
 	for i, str := range m[key].([]string) {
-		oid, err := primitive.ObjectIDFromHex(str)
+		oid, err := ToObjectId(str)
 		if err != nil {
-			return errors.New("invalid objectId")
+			return err
 		}
 		oids[i] = oid
 	}

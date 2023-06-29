@@ -36,13 +36,50 @@ func (biz *commentBusiness) CreateComment(ctx context.Context, data *entity.Comm
 		return nil, common.NewCustomBadRequestError("Post is block. Not allow to comment")
 	}
 
-	comment, err := biz.commentRepo.Create(ctx, data)
+	comment := &entity.Comment{
+		Content:  data.Content,
+		PostId:   *post.Id,
+		AuthorId: *user.Id,
+	}
+
+	if data.ParentCommentId != nil {
+		parentCmtFilter := map[string]interface{}{}
+		if err = common.AppendIdQuery(parentCmtFilter, "id", *data.ParentCommentId); err != nil {
+			return nil, err
+		}
+		parentCmt, err := biz.commentRepo.FindOne(ctx, parentCmtFilter)
+		if err != nil {
+			return nil, err
+		}
+		if parentCmt == nil {
+			return nil, common.NewNotFoundError("Comment", common.ErrNotFound)
+		}
+		if parentCmt.ParentCommentId != nil {
+			return nil, common.NewCustomBadRequestError("Cannot create reply for a reply")
+		}
+		comment.ParentCommentId = parentCmt.Id
+	} else {
+		isApproved := false
+		upVotes := []string{}
+		downVote := []string{}
+		comment.IsApprovedByPostAuthor = &isApproved
+		comment.UpVotes = &upVotes
+		comment.DownVotes = &downVote
+	}
+
+	comment, err = biz.commentRepo.Create(ctx, comment)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = biz.SetComputedData(ctx, comment); err != nil {
-		return nil, err
+	if data.ParentCommentId == nil {
+		if err = biz.SetComputedData(ctx, comment); err != nil {
+			return nil, err
+		}
+	} else {
+		if err = biz.SetAuthorData(ctx, comment); err != nil {
+			return nil, err
+		}
 	}
 
 	return comment, nil

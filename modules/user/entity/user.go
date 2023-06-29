@@ -2,7 +2,7 @@ package entity
 
 import (
 	"dev_community_server/common"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
@@ -11,11 +11,26 @@ type Token struct {
 	ExpiredAt time.Time `bson:"expired_at"`
 }
 
+type UserInsert struct {
+	common.MongoId         `bson:",inline" json:",inline"`
+	common.MongoTimestamps `bson:",inline" json:",inline"`
+	FirstName              string               `bson:"first_name,omitempty"`
+	LastName               string               `bson:"last_name,omitempty"`
+	Email                  string               `bson:"email,omitempty"`
+	Password               string               `bson:"password,omitempty"`
+	Birthday               *time.Time           `bson:"birthday,omitempty"`
+	RoleId                 primitive.ObjectID   `bson:"role_id"`
+	Avatar                 string               `bson:"avatar"`
+	VerifiedToken          *Token               `bson:"verified_token,omitempty"`
+	IsVerified             bool                 `bson:"is_verified"`
+	SavedPostIds           []primitive.ObjectID `bson:"saved_post_ids,omitempty"`
+}
+
 type User struct {
 	common.MongoId         `bson:",inline" json:",inline"`
 	common.MongoTimestamps `bson:",inline" json:",inline"`
-	FirstName              string          `bson:"first_name,omitempty" json:"first_name,omitempty"`
-	LastName               string          `bson:"last_name,omitempty" json:"last_name,omitempty"`
+	FirstName              string          `bson:"first_name,omitempty" json:"first_name"`
+	LastName               string          `bson:"last_name,omitempty" json:"last_name"`
 	Email                  string          `bson:"email,omitempty" json:"email,omitempty"`
 	Password               string          `bson:"password,omitempty" json:"-"`
 	Birthday               *time.Time      `bson:"birthday,omitempty" json:"birthday,omitempty"`
@@ -25,7 +40,7 @@ type User struct {
 	Avatar                 string          `bson:"avatar" json:"avatar"`
 	VerifiedToken          *Token          `bson:"verified_token,omitempty" json:"-"`
 	IsVerified             bool            `bson:"is_verified,omitempty" json:"is_verified,omitempty"`
-	SavedPostIds           []string        `bson:"saved_post_ids,omitempty" json:"-"`
+	SavedPostIds           []string        `bson:"saved_post_ids" json:"-"`
 }
 
 func (*User) CollectionName() string { return "users" }
@@ -36,17 +51,4 @@ func (u *User) GetUserId() string {
 
 func (u *User) GetRoleType() common.RoleType {
 	return u.RoleType
-}
-
-func (u *User) MarshalBSON() ([]byte, error) {
-	dataBytes, _ := bson.Marshal(u)
-	var bm common.BsonMap
-	if err := bson.Unmarshal(dataBytes, &bm); err != nil {
-		return nil, err
-	}
-	if err := bm.ToObjectId("role_id"); err != nil {
-		return nil, err
-	}
-
-	return bson.Marshal(bm)
 }

@@ -8,6 +8,7 @@ import (
 	userEntity "dev_community_server/modules/user/entity"
 	"encoding/hex"
 	"fmt"
+	"time"
 )
 
 func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCreate) error {
@@ -47,15 +48,28 @@ func (biz *authBusiness) Register(ctx context.Context, data *userEntity.UserCrea
 	if err = biz.emailProvider.SendEmail(mailConfig); err != nil {
 		return common.NewServerError(err)
 	}
-	data.VerifiedToken = verifyCode
 
 	role, err := biz.roleRepo.FindOne(ctx, map[string]interface{}{"type": common.Member})
 	if err != nil {
 		return err
 	}
-	data.RoleId = *role.Id
 
-	if err = biz.userRepo.Create(ctx, data); err != nil {
+	birthday := time.Time(data.Birthday)
+	user := &userEntity.User{
+		Email:     data.Email,
+		FirstName: data.FirstName,
+		LastName:  data.LastName,
+		Password:  data.Password,
+		Birthday:  &birthday,
+		Avatar:    common.DefaultAvatarUrl,
+		RoleId:    *role.Id,
+		VerifiedToken: &userEntity.Token{
+			Token:     verifyCode,
+			ExpiredAt: time.Now().Add(time.Duration(time.Hour * 24 * 7)),
+		},
+		IsVerified: false,
+	}
+	if err = biz.userRepo.Create(ctx, user); err != nil {
 		return err
 	}
 
