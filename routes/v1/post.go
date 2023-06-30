@@ -41,6 +41,6 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 		// Pending posts
 		currentUserRouter.GET("/pending-posts", postHandler.GetCurrentUserPendingPosts(appCtx))
 		// Approved posts (posted posts)
-		currentUserRouter.GET("/approved-posts")
+		currentUserRouter.GET("/approved-posts", postHandler.GetCurrentUserApprovedPosts(appCtx))
 	}
 }
