@@ -22,5 +22,7 @@ func NewCommentRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 		commentProtectedRouter.PATCH("/:id", commentHandler.UpdateComment(appCtx))
 		commentProtectedRouter.POST("/:id/up-vote", commentHandler.UpVote(appCtx))
 		commentProtectedRouter.POST("/:id/down-vote", commentHandler.DownVote(appCtx))
+		commentProtectedRouter.POST("/:id/approve", commentHandler.ApproveComment(appCtx))
+		commentProtectedRouter.POST("/:id/un-approve", commentHandler.UnApproveComment(appCtx))
 	}
 }

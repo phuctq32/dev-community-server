@@ -22,7 +22,7 @@ type Comment struct {
 	common.MongoId         `bson:",inline" json:",inline"`
 	common.MongoTimestamps `bson:",inline" json:",inline"`
 	Content                string    `bson:"content" json:"content"`
-	IsApprovedByPostAuthor *bool     `bson:"is_approved_by_post_author,omitempty" json:"is_accepted_by_post_owner,omitempty"`
+	IsApprovedByPostAuthor *bool     `bson:"is_approved_by_post_author,omitempty" json:"is_approved_by_post_owner,omitempty"`
 	PostId                 string    `bson:"post_id" json:"post_id"`
 	ParentCommentId        *string   `bson:"parent_comment_id,omitempty" json:"parent_comment_id"`
 	AuthorId               string    `bson:"author_id" json:"-"`
