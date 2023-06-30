@@ -31,6 +31,9 @@ func (biz *postBusiness) SetComputedDataForPostInList(ctx context.Context, post 
 	// Calc score
 	biz.SetScoreData(ctx, post)
 
+	// Set view count
+	post.ViewCount = len(post.TimestampViews)
+
 	return nil
 }
 

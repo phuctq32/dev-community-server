@@ -16,6 +16,7 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 		postRouter.GET("", postHandler.GetPosts(appCtx))
 		postRouter.GET("/:id", postHandler.GetPostById(appCtx))
 		postRouter.GET("/search", postHandler.SearchPosts(appCtx))
+		postRouter.GET("/trending", postHandler.GetTrendingPosts(appCtx))
 	}
 
 	postProtectedRouter := postRouter.Use(middlewares.Authorize(appCtx))
@@ -25,7 +26,6 @@ func NewPostRoutes(appCtx appctx.AppContext, group *gin.RouterGroup) {
 		postProtectedRouter.DELETE("/:id")
 		postProtectedRouter.POST("/:id/up-vote", postHandler.UpVote(appCtx))
 		postProtectedRouter.POST("/:id/down-vote", postHandler.DownVote(appCtx))
-		postProtectedRouter.POST("/:id/view")
 		postProtectedRouter.POST("/:id/approve", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.ApprovePostHandler(appCtx))
 		postProtectedRouter.POST("/:id/block", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.BlockPostHandler(appCtx))
 		postProtectedRouter.POST("/:id/unblock", middlewares.RequireRoles(common.Administrator, common.Moderator), postHandler.UnblockPostHandler(appCtx))

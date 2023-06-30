@@ -31,6 +31,7 @@ type PostBusiness interface {
 	RemovePostFromSavedPosts(ctx context.Context, postId string, userId string) ([]entity.Post, error)
 	UpVote(ctx context.Context, postId string, userId string) (*entity.Post, error)
 	DownVote(ctx context.Context, postId string, userId string) (*entity.Post, error)
+	GetTrendingPosts(ctx context.Context, quantity int) ([]entity.Post, error)
 }
 
 type postHandler struct {
