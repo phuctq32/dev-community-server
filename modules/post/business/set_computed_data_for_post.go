@@ -60,6 +60,10 @@ func (biz *postBusiness) SetAuthorData(ctx context.Context, post *entity.Post) e
 	if author == nil {
 		return common.NewNotFoundError("User", common.ErrNotFound)
 	}
+	roleFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(roleFilter, "id", author.RoleId)
+	role, _ := biz.roleRepo.FindOne(ctx, roleFilter)
+	author.Role = role.Name
 	post.Author = author
 	return nil
 }

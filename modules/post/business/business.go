@@ -5,6 +5,7 @@ import (
 	"dev_community_server/common"
 	entity4 "dev_community_server/modules/comment/entity"
 	"dev_community_server/modules/post/entity"
+	entity5 "dev_community_server/modules/role/entity"
 	entity2 "dev_community_server/modules/tag/entity"
 	entity3 "dev_community_server/modules/topic/entity"
 	userEntity "dev_community_server/modules/user/entity"
@@ -40,14 +41,19 @@ type TagRepository interface {
 	FindOne(ctx context.Context, filter map[string]interface{}) (*entity2.Tag, error)
 }
 
+type RoleRepository interface {
+	FindOne(ctx context.Context, filter map[string]interface{}) (*entity5.Role, error)
+}
+
 type postBusiness struct {
 	postRepo    PostRepository
 	userRepo    UserRepository
 	commentRepo CommentRepository
 	topicRepo   TopicRepository
 	tagRepo     TagRepository
+	roleRepo    RoleRepository
 }
 
-func NewPostBusiness(postRepo PostRepository, userRepo UserRepository, cmtRepo CommentRepository, topicRepo TopicRepository, tagRepo TagRepository) *postBusiness {
-	return &postBusiness{postRepo: postRepo, userRepo: userRepo, commentRepo: cmtRepo, topicRepo: topicRepo, tagRepo: tagRepo}
+func NewPostBusiness(postRepo PostRepository, userRepo UserRepository, cmtRepo CommentRepository, topicRepo TopicRepository, tagRepo TagRepository, roleRepo RoleRepository) *postBusiness {
+	return &postBusiness{postRepo: postRepo, userRepo: userRepo, commentRepo: cmtRepo, topicRepo: topicRepo, tagRepo: tagRepo, roleRepo: roleRepo}
 }

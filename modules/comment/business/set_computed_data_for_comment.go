@@ -46,6 +46,10 @@ func (biz *commentBusiness) SetAuthorData(ctx context.Context, cmt *entity.Comme
 	if author == nil {
 		return common.NewNotFoundError("User", common.ErrNotFound)
 	}
+	roleFilter := map[string]interface{}{}
+	_ = common.AppendIdQuery(roleFilter, "id", author.RoleId)
+	role, _ := biz.roleRepo.FindOne(ctx, roleFilter)
+	author.Role = role.Name
 	cmt.Author = author
 	return nil
 }

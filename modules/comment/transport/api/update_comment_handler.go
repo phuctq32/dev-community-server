@@ -15,10 +15,13 @@ func (hdl *commentHandler) UpdateComment(appCtx appctx.AppContext) gin.HandlerFu
 		if err := c.ShouldBind(&data); err != nil {
 			panic(err)
 		}
+		data.CommentId = c.Param("id")
 
 		if err := appCtx.GetValidator().Validate(&data); err != nil {
 			panic(common.NewValidationError(err))
 		}
+
+		data.UserId = c.MustGet(common.ReqUser).(common.Requester).GetUserId()
 
 		updatedCmt, err := hdl.business.UpdateComment(c.Request.Context(), &data)
 		if err != nil {

@@ -25,21 +25,23 @@ func (biz *commentBusiness) UpVote(ctx context.Context, cmtId string, userId str
 	}
 
 	updateData := map[string]interface{}{}
-	for _, id := range *cmt.UpVotes {
+	isUpVoting := false
+	for i, id := range *cmt.UpVotes {
 		if id == *user.Id {
-			if err = biz.SetComputedDataForCommentInList(ctx, cmt); err != nil {
-				return nil, err
-			}
-			return cmt, nil
-		}
-	}
-	for i, id := range *cmt.DownVotes {
-		if id == *user.Id {
-			updateData["down_votes"] = append((*cmt.DownVotes)[:i], (*cmt.DownVotes)[i+1:]...)
+			updateData["up_votes"] = append((*cmt.UpVotes)[:i], (*cmt.UpVotes)[i+1:]...)
+			isUpVoting = true
 			break
 		}
 	}
-	updateData["up_votes"] = append(*cmt.UpVotes, *user.Id)
+	if !isUpVoting {
+		for i, id := range *cmt.DownVotes {
+			if id == *user.Id {
+				updateData["down_votes"] = append((*cmt.DownVotes)[:i], (*cmt.DownVotes)[i+1:]...)
+				break
+			}
+		}
+		updateData["up_votes"] = append(*cmt.UpVotes, *user.Id)
+	}
 
 	updatedCmt, err := biz.commentRepo.Update(ctx, cmtFilter, updateData)
 	if err != nil {

@@ -33,21 +33,23 @@ func (biz *postBusiness) DownVote(ctx context.Context, postId string, userId str
 	}
 
 	updateData := map[string]interface{}{}
-	for _, id := range post.DownVotes {
+	isDownVoting := false
+	for i, id := range post.DownVotes {
 		if id == *currentUser.Id {
-			if err = biz.SetComputedData(ctx, post); err != nil {
-				return nil, err
-			}
-			return post, nil
-		}
-	}
-	for i, id := range post.UpVotes {
-		if id == *currentUser.Id {
-			updateData["up_votes"] = append(post.UpVotes[:i], post.UpVotes[i+1:]...)
+			updateData["down_votes"] = append(post.DownVotes[:i], post.DownVotes[i+1:]...)
+			isDownVoting = true
 			break
 		}
 	}
-	updateData["down_votes"] = append(post.DownVotes, *currentUser.Id)
+	if !isDownVoting {
+		for i, id := range post.UpVotes {
+			if id == *currentUser.Id {
+				updateData["up_votes"] = append(post.UpVotes[:i], post.UpVotes[i+1:]...)
+				break
+			}
+		}
+		updateData["down_votes"] = append(post.DownVotes, *currentUser.Id)
+	}
 
 	updatedPost, err := biz.postRepo.Update(ctx, postFilter, updateData)
 	if err != nil {
